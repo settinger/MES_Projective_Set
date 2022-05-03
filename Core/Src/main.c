@@ -65,7 +65,6 @@
 uint32_t button0_debounce_time_old = 0;
 TS_StateTypeDef TS_State;
 
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -140,7 +139,6 @@ int main(void) {
   if (TS_Get_Params() != 0) {
     Touchscreen_Calibration();
     HAL_FLASH_Lock();
-    //Error_Handler();
   }
   BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
   Serial_Message("LCD X dimension: ");
