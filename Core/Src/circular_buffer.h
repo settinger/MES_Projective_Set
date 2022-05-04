@@ -8,6 +8,8 @@
  */
 
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 #ifndef SRC_CIRCULAR_BUFFER_H_
 #define SRC_CIRCULAR_BUFFER_H_
@@ -26,7 +28,7 @@ typedef circular_buf_t* cbuf_handle_t;
  * Pass in a storage buffer and size
  * Returns a circular buffer handle
  */
-cbuf_handle_t(uint8_t* buffer, size_t size);
+cbuf_handle_t circular_buf_init(uint8_t* buffer, size_t size);
 
 /*
  * Free a circular buffer structure
@@ -76,11 +78,6 @@ size_t circular_buf_capacity(cbuf_handle_t me);
  * Returns the current number of elements in the buffer
  */
 size_t circular_buf_size(cbuf_handle_t me);
-
-/*
- * Return a pointer to a struct instance
- */
-cbuf_handle_t circular_buf_init(uint8_t* buffer, size_t size);
 
 
 #endif /* SRC_CIRCULAR_BUFFER_H_ */

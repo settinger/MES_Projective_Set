@@ -278,6 +278,5 @@ int TS_Get_Params(void) {
   Serial_Message("LCD configuration loaded.");
 
   HAL_FLASH_Lock();
-  Serial_Message("EEPROM written");
   return 0; // MAGIC NUMBER
 }

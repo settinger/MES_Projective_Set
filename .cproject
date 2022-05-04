@@ -45,10 +45,10 @@
 									<listOptionValue builtIn="false" value="../Core/Src"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src/system}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Drivers/BSP/STM32F429I-Discovery}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;E:\Code\STM32Cube\Repository\STM32Cube_FW_F4_V1.27.0\Drivers\STM32F4xx_HAL_Driver\Inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;E:\Code\STM32Cube\Repository\STM32Cube_FW_F4_V1.27.0\Drivers\STM32F4xx_HAL_Driver\Inc\Legacy&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;E:\Code\STM32Cube\Repository\STM32Cube_FW_F4_V1.27.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;E:\Code\STM32Cube\Repository\STM32Cube_FW_F4_V1.27.0\Drivers\CMSIS\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;..\..\..\..\STM32Cube\Repository\STM32Cube_FW_F4_V1.27.0\Drivers\STM32F4xx_HAL_Driver\Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;..\..\..\..\STM32Cube\Repository\STM32Cube_FW_F4_V1.27.0\Drivers\STM32F4xx_HAL_Driver\Inc\Legacy&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;..\..\..\..\STM32Cube\Repository\STM32Cube_FW_F4_V1.27.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;..\..\..\..\STM32Cube\Repository\STM32Cube_FW_F4_V1.27.0\Drivers\CMSIS\Include&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1020459165" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -174,5 +174,12 @@
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/MES_Projective_Set"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/MES_Projective_Set"/>
+		</configuration>
+	</storageModule>
 </cproject>

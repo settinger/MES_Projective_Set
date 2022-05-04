@@ -14,14 +14,17 @@
 
 #include <stdint.h>
 #include "stdlib.h"
+#include "usart.h"
+
+// #include "circular_buffer.h" For now do things with a linear buffer sorry
 
 typedef enum {
-  CONSOLE_SUCCESS = 0u,
-  CONSOLE_ERROR = 1u
+  CONSOLE_SUCCESS = 0u, CONSOLE_ERROR = 1u
 } consoleError;
 
 consoleError ConsoleIoInit(void);
-consoleError ConsoleIoReceive(uint8_t * buffer, const uint32_t bufferLength, uint32_t * readLength);
-consoleError ConsoleIoSend(const char * buffer); // Must be null-terminated string
+consoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength,
+    uint32_t *readLength);
+consoleError ConsoleIoSend(const char *buffer); // Must be null-terminated string
 
 #endif /* SRC_CONSOLE_IO_H_ */

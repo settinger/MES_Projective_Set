@@ -7,12 +7,17 @@
  *      Author: Sam
  */
 
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include "circular_buffer.h"
+
 // The hidden definition of our circular buffer structure
 struct circular_buf_t {
   uint8_t *buffer;
   size_t head;
   size_t tail;
-  size_t max; //of the buffer
+  size_t max; // of the buffer
   bool full;
 };
 
@@ -26,7 +31,6 @@ cbuf_handle_t circular_buf_init(uint8_t *buffer, size_t size) {
   assert(buffer && size);
 
   cbuf_handle_t cbuf = malloc(sizeof(circular_buf_t));
-  assert(me);
 
   cbuf->buffer = buffer;
   cbuf->max = size;
