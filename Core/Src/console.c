@@ -118,7 +118,6 @@ static int32_t ConsoleCommandEndline(const char receiveBuffer[],
 void ConsoleInit(void) {
   uint32_t i;
   ConsoleIoInit();
-  Serial_Message("teste");
   ConsoleIoSend("Console online.");
   ConsoleIoSend(ENDLINE);
   ConsoleIoSend(CONSOLE_PROMPT);

@@ -17,23 +17,14 @@
 //#include "circular_buffer.h"
 #include "serial_logging.h"
 
-bool uart_rx;
-
-static uint8_t GetCharNoBlock(void) {
-  uint8_t ch = '\n';
-  HAL_UART_Receive_IT(&huart5, (uint8_t*) &ch, 1); // Receive one character
-  if (true == uart_rx) {
-    uart_rx = false;
-    //HAL_UART_Receive_IT(&huart5, (uint8_t*) &ch, 1); // Receive one character
-
-  }
-  return ch;
-}
+static uint8_t chReceive;
+static bool uart_rx;
 
 consoleError ConsoleIoInit(void) {
   /* Enable UART5 interrupt*/
   HAL_NVIC_SetPriority(UART5_IRQn, 4, 0); // I have no idea what priority to assign this
   HAL_NVIC_EnableIRQ(UART5_IRQn);
+  HAL_UART_Receive_IT(&huart5, &chReceive, 1);
   return CONSOLE_SUCCESS;
 }
 
@@ -41,22 +32,14 @@ consoleError ConsoleIoInit(void) {
 consoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength,
     uint32_t *readLength) {
   uint32_t i = 0;
-  uint8_t ch;
 
-  HAL_UART_Receive_IT(&huart5, (uint8_t*) &ch, 1); // Receive one character
   if (uart_rx) {
     uart_rx = false;
-    HAL_UART_Transmit(&huart5, (uint8_t*) &ch, 1, 250); // Display the received character in the console
-    buffer[i] = ch;
+    HAL_UART_Transmit(&huart5, &chReceive, 1, 250); // Display the received character in the console
+    buffer[i] = chReceive;
     i++;
+    HAL_UART_Receive_IT(&huart5, &chReceive, 1);
   }
-
-//  while (huart5.RxState == HAL_UART_STATE_READY && '\r' != ch && '\n' != ch) {
-//    uart_rx = false;
-//    HAL_UART_Transmit(&huart5, (uint8_t*) &ch, 1, 250); // Display the received character in the console
-//    buffer[i] = ch;
-//    i++;
-//  }
 
   *readLength = i;
 
@@ -70,6 +53,5 @@ consoleError ConsoleIoSend(const char *buffer) {
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle) {
   /* Set transmission flag: transfer complete*/
-  //Serial_Message("Interrupt happen");
   uart_rx = true;
 }

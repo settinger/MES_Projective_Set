@@ -158,7 +158,7 @@ int main(void)
     //	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
     //	HAL_Delay(700);
     ConsoleProcess();
-    //HAL_Delay(10);
+    HAL_Delay(10);
 //    WaitForPressedState(1);
 //
 //    BSP_TS_GetState(&TS_State);
