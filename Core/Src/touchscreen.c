@@ -18,12 +18,12 @@ extern TS_StateTypeDef TS_State;
 static uint8_t Calibration_Done = 0;
 static int16_t A1, A2, B1, B2;
 static int16_t aPhysX[2], aPhysY[2], aLogX[2], aLogY[2];
-
-/* EEPROM private variables */
-/* Virtual address defined by the user: 0xFFFF value is prohibited */
-uint16_t VirtAddVarTab[NB_OF_VAR] = { 0x5555, 0x6666, 0x7777, 0x8888 };
-uint16_t VarDataTab[NB_OF_VAR] = { 0, 0, 0, 0 };
-uint16_t VarValue, VarDataTmp = 0;
+//
+///* EEPROM private variables */
+///* Virtual address defined by the user: 0xFFFF value is prohibited */
+//uint16_t VirtAddVarTab[NB_OF_VAR] = { SETTINGS_START_ADDRESS };
+//uint16_t VarDataTab[NB_OF_VAR] = { 0 };
+//uint16_t VarValue, VarDataTmp = 0;
 
 /**
  * @brief  Performs the TS calibration and tries saving results to EEPROM
@@ -228,7 +228,6 @@ uint8_t IsCalibrationDone(void) {
 // Check for A1, A2, B1, B2 values stored in EEPROM
 // If those exist, use those while initializing touchscreen
 // If they don't, enter the calibration screen
-// TODO: set it so calibration occurs if EEPROM fails, instead of going to Error_Handler()
 int TS_Get_Params(void) {
   Serial_Message("EEPROM initializing...");
   HAL_FLASH_Unlock();
@@ -277,6 +276,14 @@ int TS_Get_Params(void) {
 
   Serial_Message("LCD configuration loaded.");
 
+  Serial_Message("A1:");
+  Print_Int(A1);
+  Serial_Message("B1:");
+  Print_Int(B1);
+  Serial_Message("A2:");
+  Print_Int(A2);
+  Serial_Message("B2:");
+  Print_Int(B2);
   HAL_FLASH_Lock();
   return 0; // MAGIC NUMBER
 }

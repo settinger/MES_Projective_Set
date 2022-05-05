@@ -5,6 +5,7 @@
  * the EEPROM can only store 16-bit values, so some creative
  * adjustments had to be made
  *
+ * TODO: edit linker to protect EEPROM region from being overwritten by code
  *
  *  Created on: Apr 22, 2022
  *      Author: Sam
@@ -24,6 +25,7 @@
  * n+5: LCD calibration A2 (int)
  * n+6: LCD calibration B1 (int)
  * n+7: LCD calibration B2 (int)
+ * n+8: Proset Game Level  (uint16_t)
  */
 #define SETTINGS_START_ADDRESS 0x5555
 
@@ -45,6 +47,8 @@
 #define EEPROM_LCD_A2_ADDRESS  SETTINGS_START_ADDRESS+5
 #define EEPROM_LCD_B1_ADDRESS  SETTINGS_START_ADDRESS+6
 #define EEPROM_LCD_B2_ADDRESS  SETTINGS_START_ADDRESS+7
+
+#define EEPROM_PROSET_ADDRESS  SETTINGS_START_ADDRESS+8
 
 int EEPROM_exists(void);
 

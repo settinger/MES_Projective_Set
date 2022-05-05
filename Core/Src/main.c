@@ -138,17 +138,19 @@ int main(void)
   // If no values for A1, A2, B1, B2 are stored in EEPROM, run the calibration
   // Else, go right into init things
   // TODO: replace magic numbers in TS_Get_Params
-  if (TS_Get_Params() != 0) {
-    Touchscreen_Calibration();
-    HAL_FLASH_Lock();
-  }
-  BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
-  Serial_Message("LCD X dimension: ");
-  Print_Int(BSP_LCD_GetXSize());
-  Serial_Message("\n\nLCD Y dimension: ");
-  Print_Int(BSP_LCD_GetYSize());
+  // TODO: Is calibration even necessary? or used at all?
+//  if (TS_Get_Params() != 0) {
+//    Touchscreen_Calibration();
+//    HAL_FLASH_Lock();
+//  }
 
-  ConsoleInit();
+  BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+//  Serial_Message("LCD X dimension: ");
+//  Print_Int(BSP_LCD_GetXSize()); // It's 240
+//  Serial_Message("\n\nLCD Y dimension: ");
+//  Print_Int(BSP_LCD_GetYSize()); // It's 320
+
+  //ConsoleInit();
 
   /* USER CODE END 2 */
 
@@ -157,20 +159,21 @@ int main(void)
   while (1) {
     //	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
     //	HAL_Delay(700);
-    ConsoleProcess();
-    HAL_Delay(10);
-//    WaitForPressedState(1);
-//
-//    BSP_TS_GetState(&TS_State);
-//    int16_t x = TS_State.X;
-//    int16_t y = TS_State.Y;
-//    Serial_Message("Touch X coordinate: ");
-//    Print_Int(x);
-//    Serial_Message("\n\nTouch Y coordinate: ");
-//    Print_Int(y);
-//
-//    /* Wait until touch is released */
-//    WaitForPressedState(0);
+    //ConsoleProcess();
+    //HAL_Delay(10);
+    WaitForPressedState(1);
+
+    BSP_TS_GetState(&TS_State);
+    int16_t x = TS_State.X;
+    int16_t y = TS_State.Y;
+    y = 320 - y;
+    Serial_Message("Touch X coordinate: ");
+    Print_Int(x);
+    Serial_Message("\n\nTouch Y coordinate: ");
+    Print_Int(y);
+
+    /* Wait until touch is released */
+    WaitForPressedState(0);
 
     /* USER CODE END WHILE */
 
