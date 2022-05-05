@@ -14,7 +14,6 @@
 #include "string.h"
 #include "usart.h"
 #include "console_io.h"
-//#include "circular_buffer.h"
 #include "serial_logging.h"
 
 static uint8_t chReceive;

@@ -16,8 +16,6 @@
 #include "stdlib.h"
 #include "usart.h"
 
-// #include "circular_buffer.h" For now do things with a linear buffer sorry
-
 typedef enum {
   CONSOLE_SUCCESS = 0u, CONSOLE_ERROR = 1u
 } consoleError;
