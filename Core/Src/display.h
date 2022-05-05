@@ -16,14 +16,14 @@
 #define BOARD_WIDTH 240
 #define BOARD_HEIGHT 320
 
-#define CARD_UNIT     24
-#define CARD_PADDING   6
-#define CARD_MARGIN   10
+#define CARD_UNIT     22
+#define CARD_PADDING   5
+#define CARD_MARGIN    8
 
 #define CARD_WIDTH   (2*CARD_UNIT + 2*CARD_PADDING)
 #define CARD_HEIGHT  (3*CARD_UNIT + 2*CARD_PADDING)
 
-#define DOT_RADIUS     8
+#define DOT_RADIUS     7
 
 #define BOARD_HALFWIDTH (BOARD_WIDTH >> 1)
 #define BOARD_HALFHEIGHT (BOARD_HEIGHT >> 1)
@@ -34,5 +34,6 @@
 void prepareDisplay(void);
 
 void drawCard(uint16_t x, uint16_t y);
+void drawRoundedCard(uint16_t x, uint16_t y);
 
 #endif /* SRC_DISPLAY_H_ */
