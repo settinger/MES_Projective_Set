@@ -48,4 +48,8 @@ The board's LCD touchscreen is the primary display and interaction focus. Touchi
 
 A paint program was implemented on the STM32F429I-DISC1 touchscreen. One stroke results in eight lines being drawn on the screen, preserving 4-fold radial and bilateral symmetry. The stroke width and color can be adjusted by pressing the user-input button, which opens a settings menu. Also on the settings menu, the user can generate a random "starter" azulejo design, because sometimes staring at a blank canvas is too daunting. The settings menu also includes a "Save & Transmit" option that saves the current drawing as a bitmap on the device's file system, which the user can retrive when the device is connected to a computer by USB.
 
+![](https://www.settinger.net/projects/azulejio/img/azulejio.gif)
+
+*a mockup in javascript*
+
 *\[In the final report, diagrams representing the system will go here. The hardware block diagram will have the LCD-touchscreen communicate with the processor via SPI, a terminal comunicating with the processor via UART, a button communicating via GPIO, and a file system thing via either USB or JTAG I don't fully understand yet. The software block diagram will describe have blocks for: graphics processing, LCD-touchscreen HAL, drawing to display, reading touch inputs, reading to/writing from console, settings store/recall, file system, button control.\]*
