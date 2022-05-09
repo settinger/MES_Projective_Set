@@ -43,6 +43,9 @@
 #include "display.h"
 #include "touchscreen.h"
 #include "console.h"
+#include "game.h"
+#include "deck.h"
+#include "card.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -145,6 +148,7 @@ int main(void)
 //  }
 
   BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+  prosetInit();
 //  Serial_Message("LCD X dimension: ");
 //  Print_Int(BSP_LCD_GetXSize()); // It's 240
 //  Serial_Message("\n\nLCD Y dimension: ");
