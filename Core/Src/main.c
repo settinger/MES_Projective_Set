@@ -22,6 +22,7 @@
 #include "dma2d.h"
 #include "i2c.h"
 #include "ltdc.h"
+#include "rng.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -131,9 +132,10 @@ int main(void)
   MX_TIM7_Init();
   MX_DMA2D_Init();
   MX_LTDC_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
-  Serial_Message("\r\n\n\nDevice has turned on.\n");
+  Serial_Message("\r\n######################\n\nDevice has turned on.\n");
 
   prepareDisplay();
 

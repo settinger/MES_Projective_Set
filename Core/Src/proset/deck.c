@@ -10,6 +10,7 @@
 #include "deck.h"
 #include "card.h"
 #include "serial_logging.h"
+#include "rng.h"
 
 /* Globals for difficulty level, deck stuff */
 
@@ -30,7 +31,9 @@ static uint16_t randomInt(uint16_t upperLimit) {
   uint16_t cap = RAND_MAX - (RAND_MAX % upperLimit);
   uint16_t result;
   do {
-    result = rand();
+    uint32_t rando;
+    HAL_RNG_GenerateRandomNumber(&hrng, &rando);
+    result = (uint16_t)rando; // Could be more efficient if I didn't discard 16 bits every time?
   } while (result >= cap);
   return (result / (cap / upperLimit)); // Is this faster than "return result%upperlimit"?
 }
