@@ -16,6 +16,7 @@
 uint16_t numDots;
 uint16_t deckSize;
 uint16_t cardsOnTable;
+Card deck[MAX_CARDS];
 CardSlot table[10];
 
 /*
@@ -36,6 +37,7 @@ static void eepromGetLevel(void) {
     uint16_t readInt;
     if ((EE_ReadVariable(EEPROM_PROSET_ADDRESS, &readInt)) == HAL_OK) {
       Serial_Message("Level loaded!");
+      Print_Int(readInt);
       numDots = readInt;
     }
   }
@@ -45,65 +47,106 @@ static void eepromGetLevel(void) {
 }
 
 /*
-  drawCard(BOARD_HALFWIDTH - CARD_MARGIN - CARD_HALFWIDTH,
-  CARD_MARGIN + CARD_HALFHEIGHT);
-  drawCard(BOARD_HALFWIDTH + CARD_MARGIN + CARD_HALFWIDTH,
-  CARD_MARGIN + CARD_HALFHEIGHT);
-
-  drawCard(BOARD_HALFWIDTH - CARD_MARGIN * 2 - CARD_WIDTH,
-  CARD_MARGIN * 3 + CARD_HEIGHT + CARD_HALFHEIGHT);
-  drawCard(BOARD_HALFWIDTH, CARD_MARGIN * 3 + CARD_HEIGHT + CARD_HALFHEIGHT);
-  drawCard(BOARD_HALFWIDTH + CARD_MARGIN * 2 + CARD_WIDTH,
-  CARD_MARGIN * 3 + CARD_HEIGHT + CARD_HALFHEIGHT);
-
-  drawCard(BOARD_HALFWIDTH - CARD_MARGIN - CARD_HALFWIDTH,
-  CARD_MARGIN * 5 + CARD_HEIGHT * 2 + CARD_HALFHEIGHT);
-  drawCard(BOARD_HALFWIDTH + CARD_MARGIN + CARD_HALFWIDTH,
-  CARD_MARGIN * 5 + CARD_HEIGHT * 2 + CARD_HALFHEIGHT);
-  */
+ * Send debug instruction to show table/deck status
+ */
+static void gameStatus(void) {
+  Serial_Message_NB("Number of dots: ");
+  Print_Int(numDots);
+  Serial_Message_NB("Deck: ");
+  for (int i=0; i<deckSize; i++) {
+    Print_Int_NB(deck[i].value);
+    Serial_Message_NB(", ");
+  }
+}
 
 static void initTable(void) {
   // Assign the CardSlot structs
-  // numDots == 4: 5 cards in 3 rows: 2, 1, 2
-  // numDots == 5: 6 cards in 3 rows: 2, 2, 2
-  // numDots == 6: 7 cards in 3 rows: 2, 3, 2
-  // numDots == 7: 8 cards in 3 rows: 3, 2, 3
-  // numDots == 8: 9 cards in 3 rows: 3, 3, 3
-  // Not enough space on screen for 9dot version :(
+
   for (uint16_t i; i < cardsOnTable; i++) {
     table[i].holdsCard = false;
   }
   switch (numDots) {
-  case 4:
-    table[0].x = BOARD_HALFWIDTH - CARD_MARGIN - CARD_HALFWIDTH;
-    table[0].y = CARD_MARGIN + CARD_HALFHEIGHT;
-    table[1].x = BOARD_HALFWIDTH + CARD_MARGIN + CARD_HALFWIDTH;
-    table[1].y = CARD_MARGIN + CARD_HALFHEIGHT;
-    table[2].x = BOARD_HALFWIDTH;
-    table[2].y = 3*CARD_MARGIN + CARD_HEIGHT + CARD_HALFHEIGHT;
-    table[3].x = BOARD_HALFWIDTH - CARD_MARGIN - CARD_HALFWIDTH;
-    table[3].y = 5*CARD_MARGIN + 2*CARD_HEIGHT + CARD_HALFHEIGHT;
-    table[4].x = BOARD_HALFWIDTH + CARD_MARGIN + CARD_HALFWIDTH;
-    table[4].y = 5*CARD_MARGIN + 2*CARD_HEIGHT + CARD_HALFHEIGHT;
+  case 4: // 5 cards in 3 rows: 2, 1, 2
+    table[0].x = COLUMN_2;
+    table[0].y = ROW_1;
+    table[1].x = COLUMN_4;
+    table[1].y = ROW_1;
+    table[2].x = COLUMN_3;
+    table[2].y = ROW_2;
+    table[3].x = COLUMN_2;
+    table[3].y = ROW_3;
+    table[4].x = COLUMN_4;
+    table[4].y = ROW_3;
     break;
-  case 5:
+  case 5: // 6 cards in 3 rows: 2, 2, 2
+    table[0].x = COLUMN_2;
+    table[0].y = ROW_1;
+    table[1].x = COLUMN_4;
+    table[1].y = ROW_1;
+    table[2].x = COLUMN_2;
+    table[2].y = ROW_2;
+    table[3].x = COLUMN_4;
+    table[3].y = ROW_2;
+    table[4].x = COLUMN_2;
+    table[4].y = ROW_3;
+    table[5].x = COLUMN_4;
+    table[5].y = ROW_3;
     break;
-  case 6:
-    table[0].x = BOARD_HALFWIDTH - CARD_MARGIN - CARD_HALFWIDTH;
-    table[0].y = CARD_MARGIN + CARD_HALFHEIGHT;
-    table[1].x = BOARD_HALFWIDTH + CARD_MARGIN + CARD_HALFWIDTH;
-    table[1].y = CARD_MARGIN + CARD_HALFHEIGHT;
-    table[2].x = BOARD_HALFWIDTH - CARD_MARGIN - CARD_HALFWIDTH;
-    table[2].y = 3*CARD_MARGIN + CARD_HEIGHT + CARD_HALFHEIGHT;
-    table[3].x = BOARD_HALFWIDTH;
-    table[3].y = 3*CARD_MARGIN + CARD_HEIGHT + CARD_HALFHEIGHT;
-    //
-    table[4].y = 3*CARD_MARGIN + CARD_HEIGHT + CARD_HALFHEIGHT;
-    table[5].x = BOARD_HALFWIDTH - CARD_MARGIN - CARD_HALFWIDTH;
-    table[5].y = 5*CARD_MARGIN + 2*CARD_HEIGHT + CARD_HALFHEIGHT;
-    table[6].x = BOARD_HALFWIDTH + CARD_MARGIN + CARD_HALFWIDTH;
-    table[6].y = 5*CARD_MARGIN + 2*CARD_HEIGHT + CARD_HALFHEIGHT;
+  case 6: // 7 cards in 3 rows: 2, 3, 2
+    table[0].x = COLUMN_2;
+    table[0].y = ROW_1;
+    table[1].x = COLUMN_4;
+    table[1].y = ROW_1;
+    table[2].x = COLUMN_1;
+    table[2].y = ROW_2;
+    table[3].x = COLUMN_3;
+    table[3].y = ROW_2;
+    table[4].x = COLUMN_5;
+    table[4].y = ROW_2;
+    table[5].x = COLUMN_2;
+    table[5].y = ROW_3;
+    table[6].x = COLUMN_4;
+    table[6].y = ROW_3;
     break;
+  case 7: // 8 cards in 3 rows: 3, 2, 3
+    table[0].x = COLUMN_1;
+    table[0].y = ROW_1;
+    table[1].x = COLUMN_3;
+    table[1].y = ROW_1;
+    table[2].x = COLUMN_5;
+    table[2].y = ROW_1;
+    table[3].x = COLUMN_2;
+    table[3].y = ROW_2;
+    table[4].x = COLUMN_4;
+    table[4].y = ROW_2;
+    table[5].x = COLUMN_1;
+    table[5].y = ROW_3;
+    table[6].x = COLUMN_3;
+    table[6].y = ROW_3;
+    table[7].x = COLUMN_5;
+    table[7].y = ROW_3;
+    break;
+  case 8: // 9 cards in 3 rows: 3, 3, 3
+    table[0].x = COLUMN_1;
+    table[0].y = ROW_1;
+    table[1].x = COLUMN_3;
+    table[1].y = ROW_1;
+    table[2].x = COLUMN_5;
+    table[2].y = ROW_1;
+    table[3].x = COLUMN_1;
+    table[3].y = ROW_2;
+    table[4].x = COLUMN_3;
+    table[4].y = ROW_2;
+    table[5].x = COLUMN_5;
+    table[5].y = ROW_2;
+    table[6].x = COLUMN_1;
+    table[6].y = ROW_3;
+    table[7].x = COLUMN_3;
+    table[7].y = ROW_3;
+    table[8].x = COLUMN_5;
+    table[8].y = ROW_3;
+    break;
+    // Not enough space on screen for 9dot version :(
   }
 }
 
@@ -119,4 +162,5 @@ void prosetInit(void) {
   initTable();
   // TODO: Begin timer
   //deal();
+  gameStatus();
 }

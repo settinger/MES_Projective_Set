@@ -136,6 +136,6 @@ void prepareDisplay(void) {
   drawCard(BOARD_HALFWIDTH + CARD_MARGIN + CARD_HALFWIDTH,
   CARD_MARGIN * 5 + CARD_HEIGHT * 2 + CARD_HALFHEIGHT);
 
-//  BSP_LCD_DisplayStringAtLine(2, (uint8_t*) " Thank you ");
-//  BSP_LCD_DisplayStringAtLine(3, (uint8_t*) "  XXXXXX!  ");
+  BSP_LCD_DisplayStringAt(0, 300, (uint8_t*)"04:20", RIGHT_MODE);
+  BSP_LCD_DisplayStringAt(0, 300, (uint8_t*)"0 Sets", LEFT_MODE);
 }

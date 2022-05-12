@@ -179,6 +179,8 @@ int main(void)
     /* Wait until touch is released */
     WaitForPressedState(0);
 
+    BSP_LCD_DisplayStringAt(0, 300, (uint8_t*)" Sets", LEFT_MODE);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

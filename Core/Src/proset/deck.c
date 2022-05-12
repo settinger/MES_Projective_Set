@@ -15,7 +15,7 @@
 
 extern uint16_t numDots;
 extern uint16_t deckSize;
-Card deck[MAX_CARDS];
+extern Card deck[MAX_CARDS];
 
 /*
  * Fisher-Yates Shuffle
