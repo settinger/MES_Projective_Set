@@ -9,6 +9,7 @@
 #define SRC_DISPLAY_H_
 
 #include "stdio.h"
+#include <stdbool.h>
 
 #define LCD_FRAME_BUFFER_LAYER0 (LCD_FRAME_BUFFER + 0x130000)
 #define LCD_FRAME_BUFFER_LAYER1 LCD_FRAME_BUFFER
@@ -19,6 +20,7 @@
 #define CARD_UNIT     22
 #define CARD_PADDING   5
 #define CARD_MARGIN    8
+#define CARD_HIGHLIGHT 5
 
 #define CARD_WIDTH   (2*CARD_UNIT + 2*CARD_PADDING)
 #define CARD_HEIGHT  (3*CARD_UNIT + 2*CARD_PADDING)
@@ -43,10 +45,11 @@
 #define ROW_3    (5*CARD_MARGIN + 2*CARD_HEIGHT + CARD_HALFHEIGHT)
 
 
-
 void prepareDisplay(void);
+void clearScreen(void);
 
-void drawCard(uint16_t x, uint16_t y);
+void drawCard(uint16_t x, uint16_t y, int value, bool selected);
 void drawRoundedCard(uint16_t x, uint16_t y);
+void drawTable(void);
 
 #endif /* SRC_DISPLAY_H_ */

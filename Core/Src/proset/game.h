@@ -9,5 +9,6 @@
 #define SRC_PROSET_GAME_H_
 
 void prosetInit(void);
+void drawTable(void);
 
 #endif /* SRC_PROSET_GAME_H_ */

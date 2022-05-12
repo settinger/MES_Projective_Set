@@ -6,17 +6,18 @@
  */
 
 #include "game.h"
-#include "card.h"
-#include "deck.h"
+#include <cards.h>
+#include <game_graphics.h>
 #include "eeprom.h"
 #include "settings.h"
 #include "serial_logging.h"
-#include "display.h"
 
+/* Globals for difficulty level, deck stuff */
 uint16_t numDots;
 uint16_t deckSize;
-uint16_t cardsOnTable;
-Card deck[MAX_CARDS];
+uint16_t tableCards;
+int deck[MAX_CARDS];
+int deckPointer = -1; // Current index of cards dealt from the deck array
 CardSlot table[10];
 
 /*
@@ -43,7 +44,7 @@ static void eepromGetLevel(void) {
   }
   HAL_FLASH_Lock();
   deckSize = (1 << numDots) - 1;
-  cardsOnTable = numDots + 1;
+  tableCards = numDots + 1;
 }
 
 /*
@@ -52,18 +53,52 @@ static void eepromGetLevel(void) {
 static void gameStatus(void) {
   Serial_Message_NB("Number of dots: ");
   Print_Int(numDots);
-  Serial_Message_NB("Deck: ");
-  for (int i=0; i<deckSize; i++) {
-    Print_Int_NB(deck[i].value);
+  Serial_Message_NB("Cards left in deck: ");
+  for (int i = deckPointer; i < deckSize; i++) {
+    Print_Int_NB(deck[i]);
     Serial_Message_NB(", ");
   }
+  char board[100];
+  switch (numDots) {
+  case 4:
+    sprintf(board, " %02d  %02d\r\n   %02d\r\n %02d  %02d\r\n",
+        table[0].cardVal, table[1].cardVal, table[2].cardVal, table[3].cardVal,
+        table[4].cardVal);
+    break;
+  case 5:
+    sprintf(board, " %02d  %02d\r\n %02d  %02d\r\n %02d  %02d\r\n",
+        table[0].cardVal, table[1].cardVal, table[2].cardVal, table[3].cardVal,
+        table[4].cardVal, table[5].cardVal);
+    break;
+  case 6:
+    sprintf(board, "   %02d  %02d\r\n %02d  %02d  %02d\r\n   %02d  %02d\r\n",
+        table[0].cardVal, table[1].cardVal, table[2].cardVal, table[3].cardVal,
+        table[4].cardVal, table[5].cardVal, table[6].cardVal);
+    break;
+  case 7:
+    sprintf(board,
+        " %02d  %02d  %02d\r\n   %02d  %02d\r\n %02d  %02d  %02d\r\n",
+        table[0].cardVal, table[1].cardVal, table[2].cardVal, table[3].cardVal,
+        table[4].cardVal, table[5].cardVal, table[6].cardVal, table[7].cardVal);
+    break;
+  case 8:
+    sprintf(board,
+        " %02d  %02d  %02d\r\n %02d  %02d  %02d\r\n %02d  %02d  %02d\r\n",
+        table[0].cardVal, table[1].cardVal, table[2].cardVal, table[3].cardVal,
+        table[4].cardVal, table[5].cardVal, table[6].cardVal, table[7].cardVal,
+        table[8].cardVal);
+    break;
+  }
+  Serial_Message("\r\nTable:");
+  Serial_Message(board);
 }
 
 static void initTable(void) {
   // Assign the CardSlot structs
 
-  for (uint16_t i; i < cardsOnTable; i++) {
-    table[i].holdsCard = false;
+  for (uint16_t i = 0; i < tableCards; i++) {
+    table[i].cardVal = -1;
+    table[i].selected = false;
   }
   switch (numDots) {
   case 4: // 5 cards in 3 rows: 2, 1, 2
@@ -151,6 +186,30 @@ static void initTable(void) {
 }
 
 /*
+ * While there are empty slots (and while deck is not exhausted), deal cards
+ * into empty cardSlot structs.
+ */
+static void dealCards(void) {
+  for (int i = 0; i < tableCards; i++) {
+    if ((table[i].cardVal < 0) && (deckPointer < deckSize)) {
+      table[i].cardVal = deck[i];
+      deckPointer++;
+    }
+  }
+}
+
+// Draw the cards currently on the table
+void drawTable() {
+  clearScreen();
+  for (int i = 0; i < tableCards; i++) {
+    if (table[i].cardVal > 0) {
+      drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected);
+    }
+  }
+  // TODO: timer and card counter
+}
+
+/*
  * Game init
  * Look for difficulty level in EEPROM
  * Depending on level, lay out game board in a particular way
@@ -161,6 +220,8 @@ void prosetInit(void) {
   initDeck();
   initTable();
   // TODO: Begin timer
-  //deal();
+  prepareDisplay();
+  dealCards();
+  drawTable();
   gameStatus();
 }
