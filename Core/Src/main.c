@@ -55,7 +55,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DEBOUNCE_TIME_MS 10
+#define DEBOUNCE_TIME_MS 10      // Time to wait (in milliseconds) before checking for a new user button press
+#define FRAME_DELAY      20      // Time to wait (in milliseconds) between updating frames
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -66,8 +67,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint32_t button0_debounce_time_old = 0;
-TS_StateTypeDef TS_State;
+uint32_t button0_debounce_time_old = 0;       // Counter to track button debounce time
+uint32_t lastFrameTick = 0;                   // Counter to track when to update frame
+uint32_t lastSecondTick = 0;                  // Counter to track when to update time indicator
+uint32_t nextTick = 0;                        // Counter for measuring time
+TS_StateTypeDef TS_State;                     // Touchscreen struct
+
 
 /* USER CODE END PV */
 
@@ -93,11 +98,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -137,50 +141,53 @@ int main(void)
 
   Serial_Message("\r\n######################\r\n\nDevice has turned on.\n");
 
-  // Enable LCD but don't turn it on yet
+  // Enable LCD and touchscreen, but don't turn it on yet
   BSP_LCD_Init();
-
-  // Touchscreen initialization
-  // If no values for A1, A2, B1, B2 are stored in EEPROM, run the calibration
-  // Else, go right into init things
-  // TODO: replace magic numbers in TS_Get_Params
-  // TODO: Is calibration even necessary? or used at all?
-//  if (TS_Get_Params() != 0) {
-//    Touchscreen_Calibration();
-//    HAL_FLASH_Lock();
-//  }
-
   BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
-  prosetInit();
-//  Serial_Message("LCD X dimension: ");
-//  Print_Int(BSP_LCD_GetXSize()); // It's 240
-//  Serial_Message("\n\nLCD Y dimension: ");
-//  Print_Int(BSP_LCD_GetYSize()); // It's 320
 
+  // Begin Console
   //ConsoleInit();
+
+  // Begin Game
+  lastFrameTick = HAL_GetTick();
+  lastSecondTick = lastFrameTick;
+  prosetInit();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
-    //	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-    //	HAL_Delay(700);
-    //ConsoleProcess();
-    //HAL_Delay(10);
-    WaitForPressedState(1);
 
-    BSP_TS_GetState(&TS_State);
-    int16_t x = TS_State.X;
-    int16_t y = TS_State.Y;
-    y = 320 - y;
-    Serial_Message("Touch X coordinate: ");
-    Print_Int(x);
-    Serial_Message("\n\nTouch Y coordinate: ");
-    Print_Int(y);
+    if (gameOn) {
+      // Check if a new touch has occurred
+      // Idle so screen is drawn at (at most) 60 FPS
+      // Update clock if necessary
 
-    /* Wait until touch is released */
-    WaitForPressedState(0);
+      nextTick = HAL_GetTick();
+      if ((nextTick-lastSecondTick) > FRAME_DELAY) {
+
+
+        //	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+        //	HAL_Delay(700);
+        //ConsoleProcess();
+        //HAL_Delay(10);
+        WaitForPressedState(1);
+
+        BSP_TS_GetState(&TS_State);
+        int16_t x = TS_State.X;
+        int16_t y = TS_State.Y;
+        y = 320 - y;
+        Serial_Message("Touch X coordinate: ");
+        Print_Int(x);
+        Serial_Message("\n\nTouch Y coordinate: ");
+        Print_Int(y);
+
+        /* Wait until touch is released */
+        WaitForPressedState(0);
+
+      }
+    }
 
     /* USER CODE END WHILE */
 
@@ -190,23 +197,23 @@ int main(void)
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void SystemClock_Config(void) {
+  RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
+   * in the RCC_OscInitTypeDef structure.
+   */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI
+      | RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -215,22 +222,20 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLN = 336;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     Error_Handler();
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+      | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-  {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
     Error_Handler();
   }
 }
@@ -240,15 +245,14 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
+ * @brief  Period elapsed callback in non blocking mode
+ * @note   This function is called  when TIM6 interrupt took place, inside
+ * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ * a global variable "uwTick" used as application time base.
+ * @param  htim : TIM handle
+ * @retval None
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
@@ -261,11 +265,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   Serial_Message("ERROR");

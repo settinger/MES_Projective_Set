@@ -77,13 +77,13 @@ static void gameStatus(void) {
     break;
   case 7:
     sprintf(board,
-        " %02d  %02d  %02d\r\n   %02d  %02d\r\n %02d  %02d  %02d\r\n",
+        " %03d  %03d  %03d\r\n    %03d  %03d\r\n %03d  %03d  %03d\r\n",
         table[0].cardVal, table[1].cardVal, table[2].cardVal, table[3].cardVal,
         table[4].cardVal, table[5].cardVal, table[6].cardVal, table[7].cardVal);
     break;
   case 8:
     sprintf(board,
-        " %02d  %02d  %02d\r\n %02d  %02d  %02d\r\n %02d  %02d  %02d\r\n",
+        " %03d  %03d  %03d\r\n %03d  %03d  %03d\r\n %03d  %03d  %03d\r\n",
         table[0].cardVal, table[1].cardVal, table[2].cardVal, table[3].cardVal,
         table[4].cardVal, table[5].cardVal, table[6].cardVal, table[7].cardVal,
         table[8].cardVal);
@@ -223,5 +223,7 @@ void prosetInit(void) {
   prepareDisplay();
   dealCards();
   drawTable();
-  gameStatus();
+#ifdef DEBUG
+  gameStatus(); // Take this out when done debugging
+#endif
 }
