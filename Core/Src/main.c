@@ -68,6 +68,7 @@
 
 /* USER CODE BEGIN PV */
 uint32_t button0_debounce_time_old = 0;       // Counter to track button debounce time
+uint32_t gameStart;                           // When (in ms since boot) the current game started
 uint32_t lastFrameTick = 0;                   // Counter to track when to update frame
 uint32_t lastSecondTick = 0;                  // Counter to track when to update time indicator
 uint32_t nextTick = 0;                        // Counter for measuring time
@@ -94,6 +95,44 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     button0_debounce_time_old = button0_debounce_time_new;
   }
 }
+
+/*
+ * Nonblocking(?) Touch detection with debounce based on WaitForPressedState() method
+ */
+
+static void checkTouch(void) {
+  BSP_TS_GetState(&TS_State);
+  // Originally a 10ms blocking delay was present here
+  if (TS_State.TouchDetected == 1) {
+    // Tick here
+    // Delay 10 blockingly
+    // If touch status changes at any point within the next 100 ms, disregard it,
+    // else, return
+  }
+}
+
+/*
+ * void WaitForPressedState(uint8_t Pressed) {
+  TS_StateTypeDef State;
+
+  do {
+    BSP_TS_GetState(&State);
+    HAL_Delay(10);
+    if (State.TouchDetected == Pressed) {
+      uint16_t TimeStart = HAL_GetTick();
+      do {
+        BSP_TS_GetState(&State);
+        HAL_Delay(10);
+        if (State.TouchDetected != Pressed) {
+          break;
+        } else if ((HAL_GetTick() - 100) > TimeStart) {
+          return;
+        }
+      } while (1);
+    }
+  } while (1);
+}
+ */
 
 /* USER CODE END 0 */
 
@@ -151,40 +190,52 @@ int main(void) {
   // Begin Game
   lastFrameTick = HAL_GetTick();
   lastSecondTick = lastFrameTick;
+  gameStart = lastSecondTick + 500; // Hacky way to add a delay before clock starts
   prosetInit();
+    bool gameOn = true; //////////////////////////////// BAD
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
-
     if (gameOn) {
-      // Check if a new touch has occurred
-      // Idle so screen is drawn at (at most) 60 FPS
       // Update clock if necessary
-
+      // Idle so screen is drawn at (at most) 50 FPS
+      // Check if a new touch has occurred
       nextTick = HAL_GetTick();
+      if ((nextTick - lastFrameTick) > 1000) {
+        // Update clock time
+        lastFrameTick += 1000;
+        drawTime(lastFrameTick - gameStart);
+      }
       if ((nextTick-lastSecondTick) > FRAME_DELAY) {
-
+        lastSecondTick = nextTick;
+        BSP_TS_GetState(&TS_State);
+        if (TS_State.TouchDetected == 1) {
+          Serial_Message("Touch X coordinate: ");
+          Print_Int(TS_State.X);
+          Serial_Message("\n\nTouch Y coordinate: ");
+          Print_Int(TS_State.Y);
+        }
 
         //	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
         //	HAL_Delay(700);
         //ConsoleProcess();
         //HAL_Delay(10);
-        WaitForPressedState(1);
-
-        BSP_TS_GetState(&TS_State);
-        int16_t x = TS_State.X;
-        int16_t y = TS_State.Y;
-        y = 320 - y;
-        Serial_Message("Touch X coordinate: ");
-        Print_Int(x);
-        Serial_Message("\n\nTouch Y coordinate: ");
-        Print_Int(y);
-
-        /* Wait until touch is released */
-        WaitForPressedState(0);
+//        WaitForPressedState(1);
+//
+//        BSP_TS_GetState(&TS_State);
+//        int16_t x = TS_State.X;
+//        int16_t y = TS_State.Y;
+//        y = 320 - y;
+//        Serial_Message("Touch X coordinate: ");
+//        Print_Int(x);
+//        Serial_Message("\n\nTouch Y coordinate: ");
+//        Print_Int(y);
+//
+//        /* Wait until touch is released */
+//        WaitForPressedState(0);
 
       }
     }

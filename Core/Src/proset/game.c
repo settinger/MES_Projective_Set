@@ -219,11 +219,28 @@ void prosetInit(void) {
   eepromGetLevel();
   initDeck();
   initTable();
-  // TODO: Begin timer
   prepareDisplay();
   dealCards();
   drawTable();
+  // TODO: Begin timer
+  drawTime(0);
 #ifdef DEBUG
   gameStatus(); // Take this out when done debugging
 #endif
+}
+
+/*
+ * Draw the clock
+ * Interface with game_graphics library
+ */
+void drawTime(uint32_t time) {
+  drawGameTime(time);
+}
+
+/*
+ * Draw the sets counter
+ * Interface with game_graphics library
+ */
+void drawSets(uint16_t sets) {
+  drawGameSets(sets);
 }

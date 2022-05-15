@@ -88,15 +88,15 @@ void drawCard(uint16_t x, uint16_t y, int value, bool selected) {
     BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
     BSP_LCD_FillCircle(x - CARD_HALFWIDTH, y - CARD_HALFHEIGHT, CARD_HIGHLIGHT);
     BSP_LCD_FillCircle(x + CARD_HALFWIDTH - 1, y - CARD_HALFHEIGHT,
-        CARD_HIGHLIGHT);
+    CARD_HIGHLIGHT);
     BSP_LCD_FillCircle(x - CARD_HALFWIDTH, y + CARD_HALFHEIGHT - 1,
-        CARD_HIGHLIGHT);
+    CARD_HIGHLIGHT);
     BSP_LCD_FillCircle(x + CARD_HALFWIDTH - 1, y + CARD_HALFHEIGHT - 1,
-        CARD_HIGHLIGHT);
+    CARD_HIGHLIGHT);
     BSP_LCD_FillRect(x - CARD_HALFWIDTH, y - CARD_HALFHEIGHT - CARD_HIGHLIGHT,
-        CARD_WIDTH, CARD_HEIGHT + 2 * CARD_HIGHLIGHT);
+    CARD_WIDTH, CARD_HEIGHT + 2 * CARD_HIGHLIGHT);
     BSP_LCD_FillRect(x - CARD_HALFWIDTH - CARD_HIGHLIGHT, y - CARD_HALFHEIGHT,
-        CARD_WIDTH + 2 * CARD_HIGHLIGHT, CARD_HEIGHT);
+    CARD_WIDTH + 2 * CARD_HIGHLIGHT, CARD_HEIGHT);
   }
   drawRoundedCard(x, y);
 
@@ -166,14 +166,46 @@ void drawCard(uint16_t x, uint16_t y, int value, bool selected) {
 }
 
 void clearScreen() {
-  BSP_LCD_LayerDefaultInit(0, LCD_FRAME_BUFFER_LAYER0);
-  BSP_LCD_SelectLayer(0);
-  BSP_LCD_Clear(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_FillRect(0, 0, 240, 300);
 }
 
 void prepareDisplay(void) {
   BSP_LCD_DisplayOn();
-  clearScreen();
-  BSP_LCD_DisplayStringAt(0, 300, (uint8_t*) "04:20", RIGHT_MODE);
-  BSP_LCD_DisplayStringAt(0, 300, (uint8_t*) "0 Sets", LEFT_MODE);
+  BSP_LCD_LayerDefaultInit(0, LCD_FRAME_BUFFER_LAYER0);
+  BSP_LCD_SelectLayer(0);
+  BSP_LCD_Clear(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_SetBackColor(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_SetFont(&Font16);
+
+//  BSP_LCD_DisplayStringAt(0, 300, (uint8_t*) "04:20", RIGHT_MODE);
+//  BSP_LCD_DisplayStringAt(0, 300, (uint8_t*) "0 Sets", LEFT_MODE);
+}
+
+// Take time (in milliseconds) and print it on the LCD
+void drawGameTime(uint32_t time) {
+  // Clear the existing time display
+  BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_FillRect(0, 300, 120, 20);
+
+  uint16_t s = time / 1000;
+  uint16_t h = s/3600;
+  s -= h*3600;
+  uint16_t m = s/60;
+  s -= m*60;
+  char string[9]; // Time is of form HH:MM:SS, rolls over after a bit over 18 hours
+  sprintf(string, "%02d:%02d:%02d", h, m, s);
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+  BSP_LCD_DisplayStringAt(15, 300, (uint8_t*)string, LEFT_MODE);
+}
+
+// Take time (in milliseconds) and print it on the LCD
+void drawGameSets(uint16_t sets) {
+  // Clear the existing sets display
+  BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_FillRect(120, 300, 120, 20);
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+  char string[10]; // Assume number of sets never exceeds 3 digits (reasonable when the upper limit is 256 cards)
+  sprintf(string, "Sets: %d", sets);
+  BSP_LCD_DisplayStringAt(-10, 300, (uint8_t*)string, RIGHT_MODE);
 }
