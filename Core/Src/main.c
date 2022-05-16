@@ -109,13 +109,15 @@ void handleTouchBegin(void) {
   Print_Int(TS_State.X);
   Serial_Message("\n\nTouch Y coordinate: ");
   Print_Int(TS_State.Y);
+
+  gameTouchHandler(x, y);
 }
 
 // Run this when a touch has been confirmed to have ended
 void handleTouchEnd(void) {
-  int16_t x = TS_State.X;
-  int16_t y = TS_State.Y;
-  y = 320 - y;
+//  int16_t x = TS_State.X;
+//  int16_t y = TS_State.Y;
+//  y = 320 - y;
 }
 
 // Run this function to determine how to parse a touch while in CLEAR_IDLE state (i.e. no touch is occurring)

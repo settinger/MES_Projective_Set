@@ -49,7 +49,7 @@ void initDeck(void) {
   deckPointer = 0;
 }
 
-void dealCard(CardSlot *slot) {
-  slot->cardVal = deck[deckPointer];
-  deckPointer++;
-}
+//void dealCard(CardSlot *slot) {
+//  slot->cardVal = deck[deckPointer];
+//  deckPointer++;
+//}

@@ -239,9 +239,24 @@ void drawTime(uint32_t time) {
 }
 
 /*
- * Draw the sets counter
+ * Draw the sets counter text
  * Interface with game_graphics library
  */
 void drawSets(uint16_t sets) {
   drawGameSets(sets);
+}
+
+/*
+ * Update the game based on a touch occurring at (x, y)
+ * Interfaces with game_graphics library
+ */
+void gameTouchHandler(uint16_t x, uint16_t y) {
+  for (int i = 0; i < tableCards; i++) {
+    if ((table[i].cardVal > 0) && CARDHIT(table[i].x, table[i].y, x, y)) {
+      table[i].selected = !table[i].selected;
+      // Do validity-of-set calculations here
+      drawTable(); // TODO: only update relevant card(s) to prevent board from being redrawn entirely each time
+      break;
+    }
+  }
 }

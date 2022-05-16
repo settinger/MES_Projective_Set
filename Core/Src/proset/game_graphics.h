@@ -44,6 +44,11 @@
 #define ROW_2    (3*CARD_MARGIN + CARD_HEIGHT + CARD_HALFHEIGHT)
 #define ROW_3    (5*CARD_MARGIN + 2*CARD_HEIGHT + CARD_HALFHEIGHT)
 
+// Return true if touch at (tx, ty) lands on card centered at (x0, y0)
+#define CARDHIT(x0, y0, tx, ty) (((x0 - CARD_HALFWIDTH - CARD_MARGIN) < tx) && \
+                                 ((x0 + CARD_HALFWIDTH + CARD_MARGIN) > tx) && \
+                                 ((y0 - CARD_HALFHEIGHT - CARD_MARGIN) < ty) && \
+                                 ((y0 + CARD_HALFHEIGHT + CARD_MARGIN) > ty))
 
 void prepareDisplay(void);
 void clearScreen(void);

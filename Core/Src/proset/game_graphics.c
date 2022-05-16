@@ -22,7 +22,7 @@ void drawRoundedCard(uint16_t x, uint16_t y) {
   uint16_t xShift = CARD_HALFWIDTH - DOT_RADIUS;
   uint16_t yShift = CARD_HALFHEIGHT - DOT_RADIUS;
 
-  /* Draw the background fill */
+  /* Draw the card body fill */
   BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
   BSP_LCD_FillCircle(x - xShift, y - yShift, DOT_RADIUS);
   BSP_LCD_FillCircle(x + xShift, y - yShift, DOT_RADIUS);
@@ -136,7 +136,7 @@ void drawCard(uint16_t x, uint16_t y, int value, bool selected) {
   if (value & 0x10) {
     BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
     BSP_LCD_FillCircle(x - CARD_HALFUNIT, y + CARD_UNIT, DOT_RADIUS);
-    BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+    BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
     BSP_LCD_DrawCircle(x - CARD_HALFUNIT, y + CARD_UNIT, DOT_RADIUS);
   }
 
