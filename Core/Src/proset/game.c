@@ -247,28 +247,9 @@ void drawCardCount() {
 }
 
 /*
- * Update the game based on a touch occurring at (x, y)
- * Interfaces with game_graphics library
- */
-void gameTouchHandler(uint16_t x, uint16_t y) {
-  for (int i = 0; i < tableCards; i++) {
-    if ((table[i].cardVal > 0) && CARDHIT(table[i].x, table[i].y, x, y)) {
-      table[i].selected = !table[i].selected;
-      // Do validity-of-set calculations here
-      if (selectionIsValid()) {
-        takeAwaySet();
-      }
-      //drawTable(); // TODO: only update relevant card(s) to prevent board from being redrawn entirely each time
-      drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected); // Don't do this here if it's done in takeAwaySet()
-      break;
-    }
-  }
-}
-
-/*
  * Check if the currently selected set is valid
  */
-static void selectionIsValid(void) {
+static bool selectionIsValid(void) {
   uint8_t sizeOfSet = 0;
   uint8_t xorOfSet = 0;
   for (int i = 0; i < tableCards; i++) {
@@ -285,4 +266,24 @@ static void selectionIsValid(void) {
  */
 static void takeAwaySet(void) {
   // TODO
+  Serial_Message("Set was found!");
+}
+
+/*
+ * Update the game based on a touch occurring at (x, y)
+ * Interfaces with game_graphics library
+ */
+void gameTouchHandler(uint16_t x, uint16_t y) {
+  for (int i = 0; i < tableCards; i++) {
+    if ((table[i].cardVal > 0) && CARDHIT(table[i].x, table[i].y, x, y)) {
+      table[i].selected = !table[i].selected;
+      // Do validity-of-set calculations here
+      if (selectionIsValid()) {
+        takeAwaySet();
+      }
+      //drawTable(); // TODO: only update relevant card(s) to prevent board from being redrawn entirely each time
+      drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected); // Don't do this here if it's done in takeAwaySet()
+      break;
+    }
+  }
 }

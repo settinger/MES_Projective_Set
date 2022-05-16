@@ -88,7 +88,7 @@
 
 const uint8_t Font16C_Table[] = 
 {
-	// @0 ' ' (10 pixels wide)
+	// @0 ' ' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -106,7 +106,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @32 '!' (10 pixels wide)
+	// @32 '!' (9 pixels wide)
 	0x00, 0x00, //            
 	0x0C, 0x00, //     ##     
 	0x0C, 0x00, //     ##     
@@ -124,7 +124,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @64 '"' (10 pixels wide)
+	// @64 '"' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x1D, 0xC0, //    ### ### 
@@ -142,7 +142,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @96 '#' (10 pixels wide)
+	// @96 '#' (9 pixels wide)
 	0x00, 0x00, //            
 	0x0D, 0x80, //     ## ##  
 	0x0D, 0x80, //     ## ##  
@@ -160,7 +160,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @128 '$' (10 pixels wide)
+	// @128 '$' (9 pixels wide)
 	0x04, 0x00, //      #     
 	0x1F, 0x80, //    ######  
 	0x31, 0x80, //   ##   ##  
@@ -178,7 +178,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @160 '%' (10 pixels wide)
+	// @160 '%' (9 pixels wide)
 	0x00, 0x00, //            
 	0x18, 0x00, //    ##      
 	0x24, 0x00, //   #  #     
@@ -196,7 +196,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @192 '&' (10 pixels wide)
+	// @192 '&' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x0F, 0x00, //     ####   
@@ -214,7 +214,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @224 ''' (10 pixels wide)
+	// @224 ''' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x07, 0x00, //      ###   
@@ -232,7 +232,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @256 '(' (10 pixels wide)
+	// @256 '(' (9 pixels wide)
 	0x00, 0x00, //            
 	0x03, 0x00, //       ##   
 	0x03, 0x00, //       ##   
@@ -250,7 +250,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @288 ')' (10 pixels wide)
+	// @288 ')' (9 pixels wide)
 	0x00, 0x00, //            
 	0x18, 0x00, //    ##      
 	0x18, 0x00, //    ##      
@@ -268,7 +268,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @320 '*' (10 pixels wide)
+	// @320 '*' (9 pixels wide)
 	0x00, 0x00, //            
 	0x06, 0x00, //      ##    
 	0x06, 0x00, //      ##    
@@ -286,7 +286,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @352 '+' (10 pixels wide)
+	// @352 '+' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -304,7 +304,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @384 ',' (10 pixels wide)
+	// @384 ',' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -322,7 +322,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @416 '-' (10 pixels wide)
+	// @416 '-' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -340,7 +340,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @448 '.' (10 pixels wide)
+	// @448 '.' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -358,7 +358,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @480 '/' (10 pixels wide)
+	// @480 '/' (9 pixels wide)
 	0x00, 0xC0, //         ## 
 	0x00, 0xC0, //         ## 
 	0x01, 0x80, //        ##  
@@ -376,7 +376,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @512 '0' (10 pixels wide)
+	// @512 '0' (9 pixels wide)
 	0x00, 0x00, //            
 	0x0E, 0x00, //     ###    
 	0x1B, 0x00, //    ## ##   
@@ -394,7 +394,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @544 '1' (10 pixels wide)
+	// @544 '1' (9 pixels wide)
 	0x00, 0x00, //            
 	0x06, 0x00, //      ##    
 	0x3E, 0x00, //   #####    
@@ -412,7 +412,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @576 '2' (10 pixels wide)
+	// @576 '2' (9 pixels wide)
 	0x00, 0x00, //            
 	0x0F, 0x00, //     ####   
 	0x19, 0x80, //    ##  ##  
@@ -430,7 +430,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @608 '3' (10 pixels wide)
+	// @608 '3' (9 pixels wide)
 	0x00, 0x00, //            
 	0x3F, 0x00, //   ######   
 	0x61, 0x80, //  ##    ##  
@@ -448,7 +448,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @640 '4' (10 pixels wide)
+	// @640 '4' (9 pixels wide)
 	0x00, 0x00, //            
 	0x07, 0x00, //      ###   
 	0x07, 0x00, //      ###   
@@ -466,7 +466,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @672 '5' (10 pixels wide)
+	// @672 '5' (9 pixels wide)
 	0x00, 0x00, //            
 	0x1F, 0x80, //    ######  
 	0x18, 0x00, //    ##      
@@ -484,7 +484,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @704 '6' (10 pixels wide)
+	// @704 '6' (9 pixels wide)
 	0x00, 0x00, //            
 	0x07, 0x80, //      ####  
 	0x1C, 0x00, //    ###     
@@ -502,7 +502,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @736 '7' (10 pixels wide)
+	// @736 '7' (9 pixels wide)
 	0x00, 0x00, //            
 	0x7F, 0x00, //  #######   
 	0x43, 0x00, //  #    ##   
@@ -520,7 +520,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @768 '8' (10 pixels wide)
+	// @768 '8' (9 pixels wide)
 	0x00, 0x00, //            
 	0x1F, 0x00, //    #####   
 	0x31, 0x80, //   ##   ##  
@@ -538,7 +538,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @800 '9' (10 pixels wide)
+	// @800 '9' (9 pixels wide)
 	0x00, 0x00, //            
 	0x1E, 0x00, //    ####    
 	0x33, 0x00, //   ##  ##   
@@ -556,7 +556,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @832 ':' (10 pixels wide)
+	// @832 ':' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -574,7 +574,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @864 ';' (10 pixels wide)
+	// @864 ';' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -592,7 +592,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @896 '<' (10 pixels wide)
+	// @896 '<' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0xC0, //         ## 
@@ -610,7 +610,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @928 '=' (10 pixels wide)
+	// @928 '=' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -628,7 +628,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @960 '>' (10 pixels wide)
+	// @960 '>' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x60, 0x00, //  ##        
@@ -646,7 +646,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @992 '?' (10 pixels wide)
+	// @992 '?' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x1F, 0x00, //    #####   
@@ -664,7 +664,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1024 '@' (10 pixels wide)
+	// @1024 '@' (9 pixels wide)
 	0x00, 0x00, //            
 	0x0E, 0x00, //     ###    
 	0x11, 0x00, //    #   #   
@@ -682,7 +682,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1056 'A' (10 pixels wide)
+	// @1056 'A' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x3F, 0x00, //   ######   
@@ -700,7 +700,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1088 'B' (10 pixels wide)
+	// @1088 'B' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7F, 0x00, //  #######   
@@ -718,7 +718,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1120 'C' (10 pixels wide)
+	// @1120 'C' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x1F, 0x40, //    ##### # 
@@ -736,7 +736,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1152 'D' (10 pixels wide)
+	// @1152 'D' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7F, 0x00, //  #######   
@@ -754,7 +754,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1184 'E' (10 pixels wide)
+	// @1184 'E' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7F, 0x80, //  ########  
@@ -772,7 +772,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1216 'F' (10 pixels wide)
+	// @1216 'F' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7F, 0xC0, //  ######### 
@@ -790,7 +790,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1248 'G' (10 pixels wide)
+	// @1248 'G' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x1E, 0x80, //    #### #  
@@ -808,7 +808,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1280 'H' (10 pixels wide)
+	// @1280 'H' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7B, 0xC0, //  #### #### 
@@ -826,7 +826,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1312 'I' (10 pixels wide)
+	// @1312 'I' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x3F, 0xC0, //   ######## 
@@ -844,7 +844,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1344 'J' (10 pixels wide)
+	// @1344 'J' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x1F, 0xC0, //    ####### 
@@ -862,7 +862,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1376 'K' (10 pixels wide)
+	// @1376 'K' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7B, 0xC0, //  #### #### 
@@ -880,7 +880,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1408 'L' (10 pixels wide)
+	// @1408 'L' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7E, 0x00, //  ######    
@@ -898,7 +898,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1440 'M' (10 pixels wide)
+	// @1440 'M' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0xE0, 0xE0, // ###     ###
@@ -916,7 +916,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1472 'N' (10 pixels wide)
+	// @1472 'N' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x73, 0xC0, //  ###  #### 
@@ -934,7 +934,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1504 'O' (10 pixels wide)
+	// @1504 'O' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x1F, 0x00, //    #####   
@@ -952,7 +952,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1536 'P' (10 pixels wide)
+	// @1536 'P' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7F, 0x00, //  #######   
@@ -970,7 +970,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1568 'Q' (10 pixels wide)
+	// @1568 'Q' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x1F, 0x00, //    #####   
@@ -988,7 +988,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1600 'R' (10 pixels wide)
+	// @1600 'R' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7F, 0x00, //  #######   
@@ -1006,7 +1006,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1632 'S' (10 pixels wide)
+	// @1632 'S' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x1F, 0x80, //    ######  
@@ -1024,7 +1024,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1664 'T' (10 pixels wide)
+	// @1664 'T' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7F, 0x80, //  ########  
@@ -1042,7 +1042,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1696 'U' (10 pixels wide)
+	// @1696 'U' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7B, 0xC0, //  #### #### 
@@ -1060,7 +1060,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1728 'V' (10 pixels wide)
+	// @1728 'V' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7B, 0xC0, //  #### #### 
@@ -1078,7 +1078,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1760 'W' (10 pixels wide)
+	// @1760 'W' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0xFB, 0xE0, // ##### #####
@@ -1096,7 +1096,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1792 'X' (10 pixels wide)
+	// @1792 'X' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x7B, 0xC0, //  #### #### 
@@ -1114,7 +1114,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1824 'Y' (10 pixels wide)
+	// @1824 'Y' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x79, 0xE0, //  ####  ####
@@ -1132,7 +1132,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1856 'Z' (10 pixels wide)
+	// @1856 'Z' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x3F, 0x80, //   #######  
@@ -1150,7 +1150,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1888 '[' (10 pixels wide)
+	// @1888 '[' (9 pixels wide)
 	0x00, 0x00, //            
 	0x07, 0x80, //      ####  
 	0x06, 0x00, //      ##    
@@ -1168,7 +1168,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1920 '\' (10 pixels wide)
+	// @1920 '\' (9 pixels wide)
 	0x30, 0x00, //   ##       
 	0x30, 0x00, //   ##       
 	0x18, 0x00, //    ##      
@@ -1186,7 +1186,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1952 ']' (10 pixels wide)
+	// @1952 ']' (9 pixels wide)
 	0x00, 0x00, //            
 	0x1E, 0x00, //    ####    
 	0x06, 0x00, //      ##    
@@ -1204,7 +1204,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @1984 '^' (10 pixels wide)
+	// @1984 '^' (9 pixels wide)
 	0x04, 0x00, //      #     
 	0x0A, 0x00, //     # #    
 	0x0A, 0x00, //     # #    
@@ -1222,7 +1222,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2016 '_' (10 pixels wide)
+	// @2016 '_' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1240,7 +1240,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0xFF, 0xE0, // ###########
 
-	// @2048 '`' (10 pixels wide)
+	// @2048 '`' (9 pixels wide)
 	0x08, 0x00, //     #      
 	0x04, 0x00, //      #     
 	0x02, 0x00, //       #    
@@ -1258,7 +1258,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2080 'a' (10 pixels wide)
+	// @2080 'a' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1276,7 +1276,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2112 'b' (10 pixels wide)
+	// @2112 'b' (9 pixels wide)
 	0x00, 0x00, //            
 	0x70, 0x00, //  ###       
 	0x30, 0x00, //   ##       
@@ -1294,7 +1294,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2144 'c' (10 pixels wide)
+	// @2144 'c' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1312,7 +1312,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2176 'd' (10 pixels wide)
+	// @2176 'd' (9 pixels wide)
 	0x00, 0x00, //            
 	0x03, 0x80, //       ###  
 	0x01, 0x80, //        ##  
@@ -1330,7 +1330,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2208 'e' (10 pixels wide)
+	// @2208 'e' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1348,7 +1348,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2240 'f' (10 pixels wide)
+	// @2240 'f' (9 pixels wide)
 	0x00, 0x00, //            
 	0x07, 0xE0, //      ######
 	0x0C, 0x00, //     ##     
@@ -1366,7 +1366,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2272 'g' (10 pixels wide)
+	// @2272 'g' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1384,7 +1384,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2304 'h' (10 pixels wide)
+	// @2304 'h' (9 pixels wide)
 	0x00, 0x00, //            
 	0x70, 0x00, //  ###       
 	0x30, 0x00, //   ##       
@@ -1402,7 +1402,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2336 'i' (10 pixels wide)
+	// @2336 'i' (9 pixels wide)
 	0x00, 0x00, //            
 	0x06, 0x00, //      ##    
 	0x06, 0x00, //      ##    
@@ -1420,7 +1420,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2368 'j' (10 pixels wide)
+	// @2368 'j' (9 pixels wide)
 	0x00, 0x00, //            
 	0x06, 0x00, //      ##    
 	0x06, 0x00, //      ##    
@@ -1438,7 +1438,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2400 'k' (10 pixels wide)
+	// @2400 'k' (9 pixels wide)
 	0x00, 0x00, //            
 	0x70, 0x00, //  ###       
 	0x30, 0x00, //   ##       
@@ -1456,7 +1456,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2432 'l' (10 pixels wide)
+	// @2432 'l' (9 pixels wide)
 	0x00, 0x00, //            
 	0x1E, 0x00, //    ####    
 	0x06, 0x00, //      ##    
@@ -1474,7 +1474,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2464 'm' (10 pixels wide)
+	// @2464 'm' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1492,7 +1492,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2496 'n' (10 pixels wide)
+	// @2496 'n' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1510,7 +1510,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2528 'o' (10 pixels wide)
+	// @2528 'o' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1528,7 +1528,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2560 'p' (10 pixels wide)
+	// @2560 'p' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1546,7 +1546,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2592 'q' (10 pixels wide)
+	// @2592 'q' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1564,7 +1564,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2624 'r' (10 pixels wide)
+	// @2624 'r' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1582,7 +1582,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2656 's' (10 pixels wide)
+	// @2656 's' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1600,7 +1600,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2688 't' (10 pixels wide)
+	// @2688 't' (9 pixels wide)
 	0x00, 0x00, //            
 	0x18, 0x00, //    ##      
 	0x18, 0x00, //    ##      
@@ -1618,7 +1618,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2720 'u' (10 pixels wide)
+	// @2720 'u' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1636,7 +1636,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2752 'v' (10 pixels wide)
+	// @2752 'v' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1654,7 +1654,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2784 'w' (10 pixels wide)
+	// @2784 'w' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1672,7 +1672,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2816 'x' (10 pixels wide)
+	// @2816 'x' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1690,7 +1690,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2848 'y' (10 pixels wide)
+	// @2848 'y' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1708,7 +1708,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2880 'z' (10 pixels wide)
+	// @2880 'z' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1726,7 +1726,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2912 '{' (10 pixels wide)
+	// @2912 '{' (9 pixels wide)
 	0x00, 0x00, //            
 	0x06, 0x00, //      ##    
 	0x0C, 0x00, //     ##     
@@ -1744,7 +1744,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2944 '|' (10 pixels wide)
+	// @2944 '|' (9 pixels wide)
 	0x00, 0x00, //            
 	0x06, 0x00, //      ##    
 	0x06, 0x00, //      ##    
@@ -1762,7 +1762,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @2976 '}' (10 pixels wide)
+	// @2976 '}' (9 pixels wide)
 	0x00, 0x00, //            
 	0x0C, 0x00, //     ##     
 	0x06, 0x00, //      ##    
@@ -1780,7 +1780,7 @@ const uint8_t Font16C_Table[] =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @3008 '~' (10 pixels wide)
+	// @3008 '~' (9 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -1801,7 +1801,7 @@ const uint8_t Font16C_Table[] =
 
 sFONT Font16Condensed = {
   Font16C_Table,
-  10, /* Width */
+  9, /* Width */
   16, /* Height */
 };
 
