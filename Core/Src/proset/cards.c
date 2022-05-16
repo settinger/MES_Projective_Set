@@ -48,8 +48,3 @@ void initDeck(void) {
   shuffle();
   deckPointer = 0;
 }
-
-//void dealCard(CardSlot *slot) {
-//  slot->cardVal = deck[deckPointer];
-//  deckPointer++;
-//}

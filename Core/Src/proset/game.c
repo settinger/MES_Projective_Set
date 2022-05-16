@@ -267,6 +267,9 @@ static bool selectionIsValid(void) {
 static void takeAwaySet(void) {
   // TODO
   Serial_Message("Set was found!");
+  // Remove all selected cards, set slot cardval to -1
+  // If deck and table exhausted, enter win state
+  // Deal new cards until deck is exhausted
 }
 
 /*
