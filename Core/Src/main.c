@@ -273,33 +273,7 @@ int main(void) {
         lastSecondTick = nextTick;
         BSP_TS_GetState(&TS_State);
         checkTouch();
-
-//        BSP_TS_GetState(&TS_State);
-//        if (TS_State.TouchDetected == 1) {
-//          Serial_Message("Touch X coordinate: ");
-//          Print_Int(TS_State.X);
-//          Serial_Message("\n\nTouch Y coordinate: ");
-//          Print_Int(TS_State.Y);
-//        }
-
-        //	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-        //	HAL_Delay(700);
-        //ConsoleProcess();
-        //HAL_Delay(10);
-//        WaitForPressedState(1);
-//
-//        BSP_TS_GetState(&TS_State);
-//        int16_t x = TS_State.X;
-//        int16_t y = TS_State.Y;
-//        y = 320 - y;
-//        Serial_Message("Touch X coordinate: ");
-//        Print_Int(x);
-//        Serial_Message("\n\nTouch Y coordinate: ");
-//        Print_Int(y);
-//
-//        /* Wait until touch is released */
-//        WaitForPressedState(0);
-
+        //ConsoleProcess(); // Should this be done here or elsewhere?
       }
     }
 

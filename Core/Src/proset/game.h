@@ -13,7 +13,7 @@
 void prosetInit(void);
 void drawTable(void);
 void drawTime(uint32_t time);
-void drawSets(uint16_t sets);
+void drawCardCount(uint16_t sets);
 void gameTouchHandler(uint16_t x, uint16_t y);
 
 #endif /* SRC_PROSET_GAME_H_ */

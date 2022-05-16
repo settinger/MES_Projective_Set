@@ -79,9 +79,10 @@ void drawRoundedCard(uint16_t x, uint16_t y) {
 
 /* Draw a card centered at (x,y) */
 void drawCard(uint16_t x, uint16_t y, int value, bool selected) {
-//  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-//  BSP_LCD_FillRect(x - CARD_HALFWIDTH, y - CARD_HALFHEIGHT, CARD_WIDTH,
-//  CARD_HEIGHT);
+  BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_FillRect(x - CARD_HALFWIDTH - CARD_MARGIN,
+      y - CARD_HALFHEIGHT - CARD_MARGIN, CARD_WIDTH + 2 * CARD_MARGIN,
+      CARD_HEIGHT + 2 * CARD_MARGIN);
 
 // If card is highlighted, add gray background
   if (selected) {
@@ -176,10 +177,7 @@ void prepareDisplay(void) {
   BSP_LCD_SelectLayer(0);
   BSP_LCD_Clear(LCD_COLOR_LIGHTGRAY);
   BSP_LCD_SetBackColor(LCD_COLOR_LIGHTGRAY);
-  BSP_LCD_SetFont(&Font16);
-
-//  BSP_LCD_DisplayStringAt(0, 300, (uint8_t*) "04:20", RIGHT_MODE);
-//  BSP_LCD_DisplayStringAt(0, 300, (uint8_t*) "0 Sets", LEFT_MODE);
+  BSP_LCD_SetFont(&Font16Condensed);
 }
 
 // Take time (in milliseconds) and print it on the LCD
@@ -189,23 +187,23 @@ void drawGameTime(uint32_t time) {
   BSP_LCD_FillRect(0, 300, 120, 20);
 
   uint16_t s = time / 1000;
-  uint16_t h = s/3600;
-  s -= h*3600;
-  uint16_t m = s/60;
-  s -= m*60;
+  uint16_t h = s / 3600;
+  s -= h * 3600;
+  uint16_t m = s / 60;
+  s -= m * 60;
   char string[9]; // Time is of form HH:MM:SS, rolls over after a bit over 18 hours
   sprintf(string, "%02d:%02d:%02d", h, m, s);
   BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-  BSP_LCD_DisplayStringAt(15, 300, (uint8_t*)string, LEFT_MODE);
+  BSP_LCD_DisplayStringAt(15, 300, (uint8_t*) string, LEFT_MODE);
 }
 
-// Take time (in milliseconds) and print it on the LCD
-void drawGameSets(uint16_t sets) {
+// Take remaining deck size and print it on the LCD
+void drawGameCardCount(uint16_t cardsLeft) {
   // Clear the existing sets display
   BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
   BSP_LCD_FillRect(120, 300, 120, 20);
   BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-  char string[10]; // Assume number of sets never exceeds 3 digits (reasonable when the upper limit is 256 cards)
-  sprintf(string, "Sets: %d", sets);
-  BSP_LCD_DisplayStringAt(-10, 300, (uint8_t*)string, RIGHT_MODE);
+  char string[16]; // Assume number of cards never exceeds 3 digits (reasonable when the upper limit is 256 cards)
+  sprintf(string, "Cards left: %d", cardsLeft);
+  BSP_LCD_DisplayStringAt(-10, 300, (uint8_t*) string, RIGHT_MODE);
 }
