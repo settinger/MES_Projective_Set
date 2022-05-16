@@ -67,13 +67,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint32_t button0_debounce_time_old = 0;       // Counter to track button debounce time
-uint32_t gameStart;                           // When (in ms since boot) the current game started
-uint32_t lastFrameTick = 0;                   // Counter to track when to update frame
-uint32_t lastSecondTick = 0;                  // Counter to track when to update time indicator
+uint32_t button0_debounce_time_old = 0; // Counter to track button debounce time
+uint32_t gameStart;          // When (in ms since boot) the current game started
+uint32_t lastFrameTick = 0;             // Counter to track when to update frame
+uint32_t lastSecondTick = 0;   // Counter to track when to update time indicator
 uint32_t nextTick = 0;                        // Counter for measuring time
 TS_StateTypeDef TS_State;                     // Touchscreen struct
-
+uint16_t touchStateTransition = 0;    // Counter for touch state event detection
+void (*checkTouch)(void);                   // Function pointer for touch states
 
 /* USER CODE END PV */
 
@@ -99,39 +100,95 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 /*
  * Nonblocking(?) Touch detection with debounce based on WaitForPressedState() method
  */
+// Run this when a touch has been confirmed to be occurring
+void handleTouchBegin(void) {
+  int16_t x = TS_State.X;
+  int16_t y = TS_State.Y;
+  y = 320 - y;
+  Serial_Message("Touch X coordinate: ");
+  Print_Int(TS_State.X);
+  Serial_Message("\n\nTouch Y coordinate: ");
+  Print_Int(TS_State.Y);
+}
 
-static void checkTouch(void) {
-  BSP_TS_GetState(&TS_State);
-  // Originally a 10ms blocking delay was present here
-  if (TS_State.TouchDetected == 1) {
-    // Tick here
-    // Delay 10 blockingly
-    // If touch status changes at any point within the next 100 ms, disregard it,
-    // else, return
+// Run this when a touch has been confirmed to have ended
+void handleTouchEnd(void) {
+  int16_t x = TS_State.X;
+  int16_t y = TS_State.Y;
+  y = 320 - y;
+}
+
+// Run this function to determine how to parse a touch while in CLEAR_IDLE state (i.e. no touch is occurring)
+// If a touch is detected, enter TOUCH_MAYBE state
+void clearIdle(void) {
+  if (TS_State.TouchDetected) {
+    checkTouch = &touchMaybe;
+    touchStateTransition = 1;
+  }
+}
+
+// Run this function to determine how to parse a touch while in TOUCH_MAYBE state (i.e. a touch might be occurring)
+// If four consecutive frames register touches (60 ms), enter TOUCH_IDLE state
+void touchMaybe(void) {
+  if (TS_State.TouchDetected) {
+    touchStateTransition++;
+    if (4 == touchStateTransition) {
+      checkTouch = &touchIdle;
+      touchStateTransition = 0;
+      handleTouchBegin();
+    }
+  } else {
+    checkTouch = &clearIdle;
+    touchStateTransition = 0;
+  }
+}
+
+// Run this function to determine how to parse a touch while in TOUCH_IDLE state (i.e. finger is currently touching screen)
+// If no touch is detected, enter CLEAR_MAYBE state
+void touchIdle() {
+  if (!TS_State.TouchDetected) {
+    checkTouch = &clearMaybe;
+    touchStateTransition = 1;
+  }
+}
+
+// Run this function to determine how to parse a touch while in CLEAR_MAYBE state (i.e. a touch might have ended)
+// If four consecutive frames register no touch (60 ms), enter CLEAR_IDLE state
+void clearMaybe() {
+  if (TS_State.TouchDetected) {
+    checkTouch = &touchIdle;
+    touchStateTransition = 0;
+  } else {
+    touchStateTransition++;
+    if (4 == touchStateTransition) {
+      checkTouch = &clearIdle;
+      touchStateTransition = 0;
+      handleTouchEnd();
+    }
   }
 }
 
 /*
  * void WaitForPressedState(uint8_t Pressed) {
-  TS_StateTypeDef State;
+ TS_StateTypeDef State;
 
-  do {
-    BSP_TS_GetState(&State);
-    HAL_Delay(10);
-    if (State.TouchDetected == Pressed) {
-      uint16_t TimeStart = HAL_GetTick();
-      do {
-        BSP_TS_GetState(&State);
-        HAL_Delay(10);
-        if (State.TouchDetected != Pressed) {
-          break;
-        } else if ((HAL_GetTick() - 100) > TimeStart) {
-          return;
-        }
-      } while (1);
-    }
-  } while (1);
-}
+ do {
+ BSP_TS_GetState(&State);
+ HAL_Delay(10);
+ if (State.TouchDetected == Pressed) {
+ uint16_t TimeStart = HAL_GetTick();
+ do {
+ BSP_TS_GetState(&State);
+ HAL_Delay(10);
+ if (State.TouchDetected != Pressed) {
+ break;
+ } else if ((HAL_GetTick() - 100) > TimeStart) {
+ return;
+ }
+ } while (1);
+ }
+ } while (1);
+ }
  */
 
 /* USER CODE END 0 */
@@ -192,7 +249,8 @@ int main(void) {
   lastSecondTick = lastFrameTick;
   gameStart = lastSecondTick + 500; // Hacky way to add a delay before clock starts
   prosetInit();
-    bool gameOn = true; //////////////////////////////// BAD
+  checkTouch = &clearIdle;
+  bool gameOn = true; //////////////////////////////// BAD
 
   /* USER CODE END 2 */
 
@@ -209,15 +267,18 @@ int main(void) {
         lastFrameTick += 1000;
         drawTime(lastFrameTick - gameStart);
       }
-      if ((nextTick-lastSecondTick) > FRAME_DELAY) {
+      if ((nextTick - lastSecondTick) > FRAME_DELAY) {
         lastSecondTick = nextTick;
         BSP_TS_GetState(&TS_State);
-        if (TS_State.TouchDetected == 1) {
-          Serial_Message("Touch X coordinate: ");
-          Print_Int(TS_State.X);
-          Serial_Message("\n\nTouch Y coordinate: ");
-          Print_Int(TS_State.Y);
-        }
+        checkTouch();
+
+//        BSP_TS_GetState(&TS_State);
+//        if (TS_State.TouchDetected == 1) {
+//          Serial_Message("Touch X coordinate: ");
+//          Print_Int(TS_State.X);
+//          Serial_Message("\n\nTouch Y coordinate: ");
+//          Print_Int(TS_State.Y);
+//        }
 
         //	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
         //	HAL_Delay(700);

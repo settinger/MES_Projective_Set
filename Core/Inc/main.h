@@ -53,6 +53,12 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+void touchMaybe(void);
+void touchIdle(void);
+void clearMaybe(void);
+void clearIdle(void);
+void handleTouchBegin(void);
+void handleTouchEnd(void);
 
 /* USER CODE END EFP */
 

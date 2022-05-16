@@ -224,6 +224,7 @@ void prosetInit(void) {
   drawTable();
   // TODO: Begin timer
   drawTime(0);
+  drawSets(0);
 #ifdef DEBUG
   gameStatus(); // Take this out when done debugging
 #endif

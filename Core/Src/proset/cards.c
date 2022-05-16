@@ -22,12 +22,6 @@ extern int deckPointer;
  * Fisher-Yates Shuffle
  * NOTA BENE: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#Implementation_errors
  */
-static void swapCards(int *a, int *b) {
-  int temp = *a;
-  *a = *b;
-  *b = temp;
-}
-
 static uint16_t randomInt(uint16_t upperLimit) {
   uint16_t cap = RAND_MAX - (RAND_MAX % upperLimit);
   uint16_t result;
@@ -44,7 +38,6 @@ void shuffle(void) {
     int temp = deck[i];
     deck[i] = deck[j];
     deck[j] = temp;
-    // swapCards(&deck[i], &deck[j]);
   }
 }
 
