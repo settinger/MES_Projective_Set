@@ -16,7 +16,6 @@
 extern uint16_t numDots;
 extern uint16_t deckSize;
 extern int deck[MAX_CARDS];
-extern int deckPointer;
 
 /*
  * Fisher-Yates Shuffle
@@ -46,5 +45,4 @@ void initDeck(void) {
     deck[i] = i + 1;
   }
   shuffle();
-  deckPointer = 0;
 }

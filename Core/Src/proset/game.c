@@ -17,7 +17,7 @@ uint16_t numDots;
 uint16_t deckSize;
 uint16_t tableCards;
 int deck[MAX_CARDS];
-int deckPointer = -1; // Current index of cards dealt from the deck array
+int deckPointer = -1; // Index of next card to be dealt from the deck array
 CardSlot table[10];
 
 /*
@@ -192,11 +192,12 @@ static void initTable(void) {
 static void dealCards(void) {
   for (int i = 0; i < tableCards; i++) {
     if ((table[i].cardVal < 0) && (deckPointer < deckSize)) {
-      table[i].cardVal = deck[i];
+      table[i].cardVal = deck[deckPointer];
       deckPointer++;
     }
   }
   // Update the "cards remaining" counter
+  drawCardCount();
 }
 
 // Draw the cards currently on the table
@@ -218,15 +219,14 @@ void drawTable() {
 void prosetInit(void) {
   eepromGetLevel();
   initDeck();
+  deckPointer = 0;
   initTable();
   prepareDisplay();
   dealCards();
   drawTable();
-  // TODO: Begin timer
   drawTime(0);
-  drawCardCount(0);
 #ifdef DEBUG
-  gameStatus(); // Take this out when done debugging
+  gameStatus();
 #endif
 }
 
@@ -262,14 +262,37 @@ static bool selectionIsValid(void) {
 }
 
 /*
+ * Check if the win conditions have been met (no cards on table, no cards in deck)
+ */
+static bool gameComplete(void) {
+  if (deckPointer < deckSize) {
+    return false;
+  }
+  for (int i = 0; i < tableCards; i++) {
+    if (table[i].cardVal > 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/*
  * Take the currently selected set, remove, and replace
  */
 static void takeAwaySet(void) {
-  // TODO
+#ifdef DEBUG
   Serial_Message("Set was found!");
+#endif
   // Remove all selected cards, set slot cardval to -1
   // If deck and table exhausted, enter win state
   // Deal new cards until deck is exhausted
+  for (int i = 0; i < tableCards; i++) {
+    if (table[i].selected) {
+      table[i].selected = false;
+      table[i].cardVal = -1;
+    }
+  }
+  dealCards();
 }
 
 /*
@@ -283,9 +306,18 @@ void gameTouchHandler(uint16_t x, uint16_t y) {
       // Do validity-of-set calculations here
       if (selectionIsValid()) {
         takeAwaySet();
+        drawTable();
+        if (gameComplete()) {
+          // do win conditions here
+#ifdef DEBUG
+          Serial_Message("Game complete!");
+#endif
+        }
+      } else {
+        drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected);
       }
       //drawTable(); // TODO: only update relevant card(s) to prevent board from being redrawn entirely each time
-      drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected); // Don't do this here if it's done in takeAwaySet()
+//      drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected); // Don't do this here if it's done in takeAwaySet()
       break;
     }
   }
