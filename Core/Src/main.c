@@ -271,6 +271,18 @@ int main(void)
       if ((nextTick - lastSecondTick) > FRAME_DELAY) {
         lastSecondTick = nextTick;
         BSP_TS_GetState(&TS_State);
+        volatile int stackX = 2;
+        volatile int stackY = 2;
+        Serial_Message_NB("Stack: ");
+        Print_Int(&stackX);
+        Print_Int(&stackY);
+        __asm volatile("mov %0, sp" : "=r"(stackY));
+        Serial_Message_NB("ASM Stack: ");
+        Print_Int(stackY);
+        Serial_Message_NB("Heap: ");
+        volatile int *heapX;
+        heapX = (int*)malloc(1);
+        Print_Int(heapX);
         checkTouch();
         //ConsoleProcess(); // Should this be done here or elsewhere?
       }
