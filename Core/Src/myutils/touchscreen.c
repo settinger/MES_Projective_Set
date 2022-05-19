@@ -268,7 +268,7 @@ int TS_Get_Params(void) {
   }
   B1 = (int16_t) readInt;
 
-  if ((EE_ReadVariable(EEPROM_LCD_A1_ADDRESS, &readInt)) != HAL_OK) {
+  if ((EE_ReadVariable(EEPROM_LCD_B2_ADDRESS, &readInt)) != HAL_OK) {
     Serial_Message("Problem loading B2!");
     return 2; // MAGIC NUMBER
   }

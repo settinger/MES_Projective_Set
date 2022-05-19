@@ -35,11 +35,21 @@ static void eepromGetLevel(void) {
   HAL_Delay(10);
   if (EE_OK == EE_Init()) {
     Serial_Message("EEPROM initialized for level select.");
+
+    if ((EE_WriteVariable(EEPROM_PROSET_ADDRESS, 7)) != HAL_OK) {
+      Serial_Message("Error writing to EEPROM: Proset Address");
+      return;
+    } else {
+      Serial_Message("Level written, nice");
+    }
+
     uint16_t readInt;
     if ((EE_ReadVariable(EEPROM_PROSET_ADDRESS, &readInt)) == HAL_OK) {
       Serial_Message("Level loaded!");
       Print_Int(readInt);
       numDots = readInt;
+    } else {
+      Serial_Message("No level loaded; defaulting to 6");
     }
   }
   HAL_FLASH_Lock();

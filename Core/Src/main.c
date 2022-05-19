@@ -240,6 +240,12 @@ int main(void)
 
   // Enable LCD and touchscreen, but don't turn it on yet
   BSP_LCD_Init();
+
+//  if (TS_Get_Params() != 0) {
+//    Touchscreen_Calibration();
+//    HAL_FLASH_Lock();
+//  }
+
   BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
 
   // Begin Console
@@ -248,7 +254,7 @@ int main(void)
   // Begin Game
   lastFrameTick = HAL_GetTick();
   lastSecondTick = lastFrameTick;
-  gameStart = lastSecondTick + 500; // Hacky way to add a delay before clock starts
+  gameStart = lastSecondTick + 250; // Hacky way to add a grace period before clock starts
   prosetInit();
   checkTouch = &clearIdle;
   bool gameOn = true; //////////////////////////////// BAD
@@ -271,18 +277,18 @@ int main(void)
       if ((nextTick - lastSecondTick) > FRAME_DELAY) {
         lastSecondTick = nextTick;
         BSP_TS_GetState(&TS_State);
-        volatile int stackX = 2;
-        volatile int stackY = 2;
-        Serial_Message_NB("Stack: ");
-        Print_Int(&stackX);
-        Print_Int(&stackY);
-        __asm volatile("mov %0, sp" : "=r"(stackY));
-        Serial_Message_NB("ASM Stack: ");
-        Print_Int(stackY);
-        Serial_Message_NB("Heap: ");
-        volatile int *heapX;
-        heapX = (int*)malloc(1);
-        Print_Int(heapX);
+//        volatile int stackX = 2;
+//        volatile int stackY = 2;
+//        Serial_Message_NB("Stack: ");
+//        Print_Int(&stackX);
+//        Print_Int(&stackY);
+//        __asm volatile("mov %0, sp" : "=r"(stackY));
+//        Serial_Message_NB("ASM Stack: ");
+//        Print_Int(stackY);
+//        Serial_Message_NB("Heap: ");
+//        volatile int *heapX;
+//        heapX = (int*)malloc(1);
+//        Print_Int(heapX);
         checkTouch();
         //ConsoleProcess(); // Should this be done here or elsewhere?
       }
