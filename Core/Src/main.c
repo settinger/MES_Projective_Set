@@ -67,13 +67,14 @@
 
 /* USER CODE BEGIN PV */
 uint32_t button0_debounce_time_old = 0; // Counter to track button debounce time
-uint32_t gameStart;          // When (in ms since boot) the current game started
+uint32_t gameStart;                     // When (in ms since boot) the current game started
 uint32_t lastFrameTick = 0;             // Counter to track when to update frame
-uint32_t lastSecondTick = 0;   // Counter to track when to update time indicator
-uint32_t nextTick = 0;                        // Counter for measuring time
-TS_StateTypeDef TS_State;                     // Touchscreen struct
-uint16_t touchStateTransition = 0;    // Counter for touch state event detection
-void (*checkTouch)(void);                   // Function pointer for touch states
+uint32_t lastSecondTick = 0;            // Counter to track when to update time indicator
+uint32_t nextTick = 0;                  // Counter for measuring time
+TS_StateTypeDef TS_State;               // Touchscreen struct
+uint16_t touchStateTransition = 0;      // Counter for touch state event detection
+void (*checkTouch)(void);               // Function pointer for touch states
+bool gameOn;                            // Whether a game is in play or not
 
 /* USER CODE END PV */
 
@@ -104,12 +105,16 @@ void handleTouchBegin(void) {
   int16_t x = TS_State.X;
   int16_t y = TS_State.Y;
   y = 320 - y;
-  Serial_Message("Touch X coordinate: ");
+  Serial_Message("\nTouch X coordinate: ");
   Print_Int(TS_State.X);
-  Serial_Message("\n\nTouch Y coordinate: ");
+  Serial_Message("\nTouch Y coordinate: ");
   Print_Int(TS_State.Y);
 
-  gameTouchHandler(x, y);
+  if (gameTouchHandler(x, y)) {
+    // TODO: win condition
+    gameOn = false;
+    drawTime(lastSecondTick - gameStart, true);
+  }
 }
 
 // Run this when a touch has been confirmed to have ended
@@ -169,37 +174,13 @@ void clearMaybe() {
   }
 }
 
-/*
- * void WaitForPressedState(uint8_t Pressed) {
- TS_StateTypeDef State;
-
- do {
- BSP_TS_GetState(&State);
- HAL_Delay(10);
- if (State.TouchDetected == Pressed) {
- uint16_t TimeStart = HAL_GetTick();
- do {
- BSP_TS_GetState(&State);
- HAL_Delay(10);
- if (State.TouchDetected != Pressed) {
- break;
- } else if ((HAL_GetTick() - 100) > TimeStart) {
- return;
- }
- } while (1);
- }
- } while (1);
- }
- */
-
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -257,7 +238,7 @@ int main(void)
   gameStart = lastSecondTick + 250; // Hacky way to add a grace period before clock starts
   prosetInit();
   checkTouch = &clearIdle;
-  bool gameOn = true; //////////////////////////////// BAD
+  gameOn = true; //////////////////////////////// BAD
 
   /* USER CODE END 2 */
 
@@ -269,26 +250,15 @@ int main(void)
       // Idle so screen is drawn at (at most) 50 FPS
       // Check if a new touch has occurred
       nextTick = HAL_GetTick();
-      if ((nextTick - lastFrameTick) > 1000) {
+      if ((nextTick - lastSecondTick) > 1000) {
         // Update clock time
-        lastFrameTick += 1000;
-        drawTime(lastFrameTick - gameStart);
+        lastSecondTick += 1000;
+        drawTime(lastSecondTick - gameStart, false);
       }
-      if ((nextTick - lastSecondTick) > FRAME_DELAY) {
-        lastSecondTick = nextTick;
+      if ((nextTick - lastFrameTick) > FRAME_DELAY) {
+        lastFrameTick = nextTick;
         BSP_TS_GetState(&TS_State);
-//        volatile int stackX = 2;
-//        volatile int stackY = 2;
-//        Serial_Message_NB("Stack: ");
-//        Print_Int(&stackX);
-//        Print_Int(&stackY);
-//        __asm volatile("mov %0, sp" : "=r"(stackY));
-//        Serial_Message_NB("ASM Stack: ");
-//        Print_Int(stackY);
-//        Serial_Message_NB("Heap: ");
-//        volatile int *heapX;
-//        heapX = (int*)malloc(1);
-//        Print_Int(heapX);
+
         checkTouch();
         //ConsoleProcess(); // Should this be done here or elsewhere?
       }
@@ -302,22 +272,21 @@ int main(void)
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void SystemClock_Config(void) {
+  RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+   * in the RCC_OscInitTypeDef structure.
+   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -326,22 +295,20 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLN = 336;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     Error_Handler();
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+      | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-  {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
     Error_Handler();
   }
 }
@@ -351,15 +318,14 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
+ * @brief  Period elapsed callback in non blocking mode
+ * @note   This function is called  when TIM6 interrupt took place, inside
+ * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ * a global variable "uwTick" used as application time base.
+ * @param  htim : TIM handle
+ * @retval None
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
@@ -372,11 +338,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   Serial_Message("ERROR");

@@ -56,7 +56,8 @@ void clearScreen(void);
 void drawCard(uint16_t x, uint16_t y, int value, bool selected);
 void drawRoundedCard(uint16_t x, uint16_t y);
 void drawTable(void);
-void drawGameTime(uint32_t);
+void drawGameTime(uint32_t, bool);
 void drawGameCardCount(uint16_t sets);
+void drawGameWon(int);
 
 #endif /* SRC_DISPLAY_H_ */

@@ -181,7 +181,7 @@ void prepareDisplay(void) {
 }
 
 // Take time (in milliseconds) and print it on the LCD
-void drawGameTime(uint32_t time) {
+void drawGameTime(uint32_t time, bool blue) {
   // Clear the existing time display
   BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
   BSP_LCD_FillRect(0, 300, 85, 20);
@@ -193,7 +193,7 @@ void drawGameTime(uint32_t time) {
   s -= m * 60;
   char string[9]; // Time is of form HH:MM:SS, rolls over after a bit over 18 hours
   sprintf(string, "%02d:%02d:%02d", h, m, s);
-  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+  BSP_LCD_SetTextColor(blue ? LCD_COLOR_BLUE : LCD_COLOR_BLACK);
   BSP_LCD_DisplayStringAt(8, 300, (uint8_t*) string, LEFT_MODE);
 }
 
@@ -206,4 +206,21 @@ void drawGameCardCount(uint16_t cardsLeft) {
   char string[16]; // Assume number of cards never exceeds 3 digits (reasonable when the upper limit is 256 cards)
   sprintf(string, "Cards left: %d", cardsLeft);
   BSP_LCD_DisplayStringAt(-3, 300, (uint8_t*) string, RIGHT_MODE);
+}
+
+
+void drawGameWon(int level) {
+  char winMsg[20];
+  sprintf(winMsg, "Level %d", level);
+
+  // Clear the existing sets display
+  BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_FillRect(85, 300, 155, 20);
+  BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+
+  BSP_LCD_SetFont(&Font16);
+  BSP_LCD_DisplayStringAt(-3, 280, (uint8_t*)"You won!", RIGHT_MODE);
+  BSP_LCD_DisplayStringAt(-11, 300, (uint8_t*) winMsg, RIGHT_MODE);
+  BSP_LCD_SetFont(&Font16Condensed);
+
 }

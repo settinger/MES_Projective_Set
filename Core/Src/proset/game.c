@@ -36,12 +36,14 @@ static void eepromGetLevel(void) {
   if (EE_OK == EE_Init()) {
     Serial_Message("EEPROM initialized for level select.");
 
-    if ((EE_WriteVariable(EEPROM_PROSET_ADDRESS, 7)) != HAL_OK) {
+/*
+     if ((EE_WriteVariable(EEPROM_PROSET_ADDRESS, 7)) != HAL_OK) {
       Serial_Message("Error writing to EEPROM: Proset Address");
       return;
     } else {
       Serial_Message("Level written, nice");
     }
+*/
 
     uint16_t readInt;
     if ((EE_ReadVariable(EEPROM_PROSET_ADDRESS, &readInt)) == HAL_OK) {
@@ -234,7 +236,7 @@ void prosetInit(void) {
   prepareDisplay();
   dealCards();
   drawTable();
-  drawTime(0);
+  drawTime(0, false);
 #ifdef DEBUG
   gameStatus();
 #endif
@@ -244,8 +246,8 @@ void prosetInit(void) {
  * Draw the clock
  * Interface with game_graphics library
  */
-void drawTime(uint32_t time) {
-  drawGameTime(time);
+void drawTime(uint32_t time, bool gameComplete) {
+  drawGameTime(time, gameComplete);
 }
 
 /*
@@ -309,7 +311,7 @@ static void takeAwaySet(void) {
  * Update the game based on a touch occurring at (x, y)
  * Interfaces with game_graphics library
  */
-void gameTouchHandler(uint16_t x, uint16_t y) {
+bool gameTouchHandler(uint16_t x, uint16_t y) {
   for (int i = 0; i < tableCards; i++) {
     if ((table[i].cardVal > 0) && CARDHIT(table[i].x, table[i].y, x, y)) {
       table[i].selected = !table[i].selected;
@@ -318,17 +320,24 @@ void gameTouchHandler(uint16_t x, uint16_t y) {
         takeAwaySet();
         drawTable();
         if (gameComplete()) {
-          // do win conditions here
+          // TODO: do win conditions here
+          // Timer gets stopped in main.c by returning true, so don't worry about that
+          // Change "Cards left: 0" text to "Game complete!" or "You win!" or something
+          // Set timer text to blue
+          char winMsg[20];
+          sprintf(winMsg, "You won lvl %d!", numDots);
+          Serial_Message(winMsg);
+          drawGameWon(numDots);
 #ifdef DEBUG
           Serial_Message("Game complete!");
 #endif
+          return true;
         }
       } else {
         drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected);
       }
-      //drawTable(); // TODO: only update relevant card(s) to prevent board from being redrawn entirely each time
-//      drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected); // Don't do this here if it's done in takeAwaySet()
       break;
     }
   }
+  return false;
 }
