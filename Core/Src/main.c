@@ -98,6 +98,16 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 }
 
 /*
+ * Methods to run when win condition is met
+ * TODO: Finish
+ */
+static void winConditions(void) {
+  gameOn = false;
+  drawTime(lastSecondTick - gameStart, true);
+  // TODO: win condition
+}
+
+/*
  * Nonblocking(?) Touch detection with debounce based on WaitForPressedState() method
  */
 // Run this when a touch has been confirmed to be occurring
@@ -112,9 +122,7 @@ void handleTouchBegin(void) {
 
   // gameTouchHandler returns 1 if the game has completed and 0 otherwise
   if (gameTouchHandler(x, y)) {
-    // TODO: win condition
-    gameOn = false;
-    drawTime(lastSecondTick - gameStart, true);
+    winConditions();
   }
 }
 
@@ -261,7 +269,11 @@ int main(void) {
         BSP_TS_GetState(&TS_State);
 
         checkTouch();
-        //ConsoleProcess(); // Should this be done here or elsewhere?
+
+        // ConsoleProcess returns 1 if the game has completed and 0 otherwise
+        if (ConsoleProcess()) {
+          winConditions();
+        }
       }
     }
 

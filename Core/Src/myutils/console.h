@@ -23,7 +23,7 @@
 
 // Console init and operate functions called from main.c
 void ConsoleInit(void);
-void ConsoleProcess(void);
+bool ConsoleProcess(void);
 
 // Structure of instruction response, called from consoleCommands.c
 typedef enum {

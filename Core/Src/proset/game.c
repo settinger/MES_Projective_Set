@@ -310,6 +310,7 @@ static void takeAwaySet(void) {
 /*
  * Update the game based on a touch occurring at (x, y)
  * Interfaces with game_graphics library
+ * Returns "true" if game is completed by this action
  */
 bool gameTouchHandler(uint16_t x, uint16_t y) {
   for (int i = 0; i < tableCards; i++) {
@@ -344,6 +345,7 @@ bool gameTouchHandler(uint16_t x, uint16_t y) {
 
 /*
  * Update the game based on a keystroke received from console.
+ * Returns "true" if game is completed by this action.
  * It would be better to do this with a consoleCommandTable struct,
  *   like we did in the console assignment, not a big if-else construction.
  * Interfaces with game_graphics library
@@ -354,9 +356,11 @@ bool gameTouchHandler(uint16_t x, uint16_t y) {
  *     'r'                  starts a new game
  *     'l'                  opens level select screen
  */
-void gameProcessInput(char oneChar) {
-  if ((48 < oneChar) && (oneChar < (48 + numDots))) {
+bool gameProcessInput(char oneChar) {
+  if ((48 < oneChar) && (oneChar <= (48 + tableCards))) {
     // Act like a card was touched
+    int cardIndex = oneChar-49; // e.g. ASCII 49 "1" corresponds to card 0
+    return gameTouchHandler(table[cardIndex].x, table[cardIndex].y);
   } else if ((oneChar == 'C') || (oneChar == 'c')) {
     // Check if any cards are selected currently
     bool anySelected = false;
@@ -372,14 +376,16 @@ void gameProcessInput(char oneChar) {
         table[i].selected = !anySelected;
       }
     }
-    if (anySelected) {
-      // Hack: deselect one of the cards and then use gameTouchHandler() to process if it's a valid set
-      for (int i = 0; i < tableCards; i++) {
-        if (table[i].cardVal > 0) {
-          table[i].selected = false;
-          gameTouchHandler(table[i].x, table[i].y); // TODO: THIS DOESN'T WORK BECAUSE IT DOESN'T SET OFF WIN CONDITION
-          break;
-        }
+    if (!anySelected && selectionIsValid()) {
+      takeAwaySet();
+      drawTable();
+      if (gameComplete()) {
+        // TODO: do win conditions here
+        drawGameWon(numDots);
+#ifdef DEBUG
+        Serial_Message("Game complete!");
+#endif
+        return true;
       }
     } else {
       drawTable();
@@ -392,4 +398,5 @@ void gameProcessInput(char oneChar) {
   } else if ((oneChar == 'L') || (oneChar == 'l')) {
     ; // Did I implement level select yet?
   }
+  return false;
 }
