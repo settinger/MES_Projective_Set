@@ -17,5 +17,6 @@ void drawTime(uint32_t time, bool gameComplete);
 void drawCardCount();
 void drawGameWon();
 bool gameTouchHandler(uint16_t x, uint16_t y);
+void gameProcessInput(char oneChar);
 
 #endif /* SRC_PROSET_GAME_H_ */

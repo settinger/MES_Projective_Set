@@ -15,6 +15,8 @@
  *      Author: Sam
  */
 
+// TODO: Take all of this out if I'm not using it
+
 #include <string.h>
 #include "console_commands.h"
 #include "console.h"
@@ -28,6 +30,8 @@ static commandResult ConsoleCommandVer(const char buffer[]);
 static commandResult ConsoleCommandHelp(const char buffer[]);
 static commandResult ConsoleCommandParam_int16(const char buffer[]);
 static commandResult ConsoleCommandParamHex_uint16(const char buffer[]);
+
+//commandResult commandProcess(const char oneChar);
 
 static const consoleCommandTable myConsoleCommandTable[] = {
     {";", &ConsoleCommandComment, HELP("Comment! You need a space after the semicolon. ")},
@@ -105,3 +109,10 @@ static commandResult ConsoleCommandVer(const char buffer[]) {
 const consoleCommandTable* ConsoleCommandsGetTable(void) {
   return (myConsoleCommandTable);
 }
+
+//commandResult commandProcess(const char oneChar) {
+//  commandResult result = COMMAND_SUCCESS;
+//
+//
+//  return result;
+//}

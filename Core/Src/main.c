@@ -110,6 +110,7 @@ void handleTouchBegin(void) {
   Serial_Message("\nTouch Y coordinate: ");
   Print_Int(TS_State.Y);
 
+  // gameTouchHandler returns 1 if the game has completed and 0 otherwise
   if (gameTouchHandler(x, y)) {
     // TODO: win condition
     gameOn = false;
@@ -217,7 +218,7 @@ int main(void) {
   MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
-  Serial_Message("\r\n######################\r\n\nDevice has turned on.\n");
+  Serial_Message("\r\n######################\r\n\nDevice has turned on.\r\n");
 
   // Enable LCD and touchscreen, but don't turn it on yet
   BSP_LCD_Init();
@@ -230,7 +231,7 @@ int main(void) {
   BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
 
   // Begin Console
-  //ConsoleInit();
+  ConsoleInit();
 
   // Begin Game
   lastFrameTick = HAL_GetTick();

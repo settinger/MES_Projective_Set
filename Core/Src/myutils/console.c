@@ -14,13 +14,14 @@
 #include "console_io.h"
 #include "console_commands.h"
 #include "serial_logging.h"
+#include "game.h"
 
 #ifndef MIN
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #endif
 
 #define NOT_FOUND -1
-#define INT16_MAX_STRLEN 8 // -65534: six characters plus two NULL
+#define INT16_MAX_STRLEN 8 // six characters plus two NULL
 #define INT32_MAX_STRLEN 16
 #define NULL_CHAR '\0'
 #define CR_CHAR '\r'
@@ -92,7 +93,8 @@ static uint32_t ConsoleResetBuffer(char receiveBuffer[],
   return remaining;
 }
 
-/* ConsoleCommandEndline
+/*
+ * ConsoleCommandEndline
  * Check to see where in the buffer stream the endline is;
  * that is the end of the command and parameters.
  */
@@ -118,7 +120,16 @@ static int32_t ConsoleCommandEndline(const char receiveBuffer[],
 void ConsoleInit(void) {
   uint32_t i;
   ConsoleIoInit();
-  ConsoleIoSend("Console online.");
+  ConsoleIoSend("Keyboard interface online.");
+  ConsoleIoSend(ENDLINE);
+  ConsoleIoSend("   Numerals 1-9 toggle cards on table");
+  ConsoleIoSend(ENDLINE);
+  ConsoleIoSend(
+      "   'c' deselects all cards or, if no cards selected, selects all cards");
+  ConsoleIoSend(ENDLINE);
+  ConsoleIoSend("   'r' starts a new game");
+  ConsoleIoSend(ENDLINE);
+  ConsoleIoSend("   'l' opens level-select screen");
   ConsoleIoSend(ENDLINE);
   ConsoleIoSend(CONSOLE_PROMPT);
   receivedSoFar = 0u;
@@ -130,63 +141,90 @@ void ConsoleInit(void) {
 
 /*
  * ConsoleProcess
- * Look for new inputs that have arrived; check for endline; then run matching command.
+ * Look for new inputs that have arrived; if valid command, run right away.
+ * No checking for endlines for this particular application.
  * Call this from a loop to handle commands as they become available.
  */
+// TODO: console
 void ConsoleProcess(void) {
-  const consoleCommandTable* commandTable;
-  uint32_t received;
-  uint32_t commandIndex;
-  int32_t commandEndline;
-  int32_t found;
-  commandResult result;
+  uint32_t received; // Number of inputs received
 
   ConsoleIoReceive((uint8_t*) &(receiveBuffer[receivedSoFar]),
-      (CONSOLE_COMMAND_MAX_LENGTH - receivedSoFar), &received);
+      CONSOLE_COMMAND_MAX_LENGTH - receivedSoFar, &received);
 
   if (received > 0 || receiveBufferNeedsChecking) {
     receiveBufferNeedsChecking = false;
     receivedSoFar += received;
-    commandEndline = ConsoleCommandEndline(receiveBuffer, receivedSoFar);
-    if (commandEndline >= 0) { // Received a complete string with a command
-      ConsoleIoSend(ENDLINE);
-      // Check if the received message is a valid instruction
-      commandTable = ConsoleCommandsGetTable();
-      commandIndex = 0u;
-      found = NOT_FOUND;
-      while ((NULL != commandTable[commandIndex].name) && (NOT_FOUND == found)) {
-        if (ConsoleCommandMatch(commandTable[commandIndex].name,
-            receiveBuffer)) {
-          result = commandTable[commandIndex].execute(receiveBuffer);
-          if (COMMAND_SUCCESS != result) {
-            ConsoleIoSend("ERROR: ");
-            ConsoleIoSend(receiveBuffer);
-            ConsoleIoSend("Help: ");
-            ConsoleIoSend(commandTable[commandIndex].help);
-            ConsoleIoSend(ENDLINE);
-          }
-          found = commandIndex;
-        } else {
-          commandIndex++;
-        }
-      }
-
-      if ((commandEndline != 0) && (NOT_FOUND == found)) {
-        if (receivedSoFar > 2) { // ignore short commands
-          ConsoleIoSend("Command not found.");
-          ConsoleIoSend(ENDLINE);
-        }
-      }
-
-      // Reset buffer by moving any leftovers and nulling the rest.
-      // This clears up to and including the front endline character.
-      receivedSoFar = ConsoleResetBuffer(receiveBuffer, receivedSoFar,
-          commandEndline + 1);
-      receiveBufferNeedsChecking = (receivedSoFar > 0 ? true : false);
-      ConsoleIoSend(CONSOLE_PROMPT);
+    // Any input needs to be processed, not just inputs after endline
+    // Check if received inputs are valid instructions
+    int blah = 0; // Break here so I can inspect the receiveBuffer here
+    for (int i = 0; i < receivedSoFar; i++) {
+      gameProcessInput(receiveBuffer[i]);
     }
   }
+
+  // Reset buffer by moving any leftovers and nulling the rest.
+  // This clears up to and including the front endline character.
+  receivedSoFar = ConsoleResetBuffer(receiveBuffer, receivedSoFar,
+      receivedSoFar + 1);
+  receiveBufferNeedsChecking = (receivedSoFar > 0); // (receivedSoFar > 0 ? true : false);
+  ConsoleIoSend(CONSOLE_PROMPT); /////////////
 }
+
+//void ConsoleProcess(void) {
+//  const consoleCommandTable* commandTable;
+//  uint32_t received;
+//  uint32_t commandIndex;
+//  int32_t commandEndline;
+//  int32_t found;
+//  commandResult result;
+//
+//  ConsoleIoReceive((uint8_t*) &(receiveBuffer[receivedSoFar]),
+//      (CONSOLE_COMMAND_MAX_LENGTH - receivedSoFar), &received);
+//
+//  if (received > 0 || receiveBufferNeedsChecking) {
+//    receiveBufferNeedsChecking = false;
+//    receivedSoFar += received;
+//    commandEndline = ConsoleCommandEndline(receiveBuffer, receivedSoFar);
+//    if (commandEndline >= 0) { // Received a complete string with a command
+//      ConsoleIoSend(ENDLINE);
+//      // Check if the received message is a valid instruction
+//      commandTable = ConsoleCommandsGetTable();
+//      commandIndex = 0u;
+//      found = NOT_FOUND;
+//      while ((NULL != commandTable[commandIndex].name) && (NOT_FOUND == found)) {
+//        if (ConsoleCommandMatch(commandTable[commandIndex].name,
+//            receiveBuffer)) {
+//          result = commandTable[commandIndex].execute(receiveBuffer);
+//          if (COMMAND_SUCCESS != result) {
+//            ConsoleIoSend("ERROR: ");
+//            ConsoleIoSend(receiveBuffer);
+//            ConsoleIoSend("Help: ");
+//            ConsoleIoSend(commandTable[commandIndex].help);
+//            ConsoleIoSend(ENDLINE);
+//          }
+//          found = commandIndex;
+//        } else {
+//          commandIndex++;
+//        }
+//      }
+//
+//      if ((commandEndline != 0) && (NOT_FOUND == found)) {
+//        if (receivedSoFar > 2) { // ignore short commands
+//          ConsoleIoSend("Command not found.");
+//          ConsoleIoSend(ENDLINE);
+//        }
+//      }
+//
+//      // Reset buffer by moving any leftovers and nulling the rest.
+//      // This clears up to and including the front endline character.
+//      receivedSoFar = ConsoleResetBuffer(receiveBuffer, receivedSoFar,
+//          commandEndline + 1);
+//      receiveBufferNeedsChecking = (receivedSoFar > 0 ? true : false);
+//      ConsoleIoSend(CONSOLE_PROMPT);
+//    }
+//  }
+//}
 
 /* ConsoleParamFindN
  * Find the start location of the nth parameter in the buffer
@@ -439,12 +477,12 @@ static commandResult ConsoleUtilIntToHexChar(uint8_t intVal, char *pChar) {
  * while exposing this functionality at the top level so that the
  * lower level console_io module doesn't need to be a dependency.
  */
-commandResult ConsoleSendString(const char * buffer) {
+commandResult ConsoleSendString(const char *buffer) {
   ConsoleIoSend(buffer);
   return COMMAND_SUCCESS;
 }
 
-commandResult ConsoleSendLine(const char * buffer) {
+commandResult ConsoleSendLine(const char *buffer) {
   ConsoleIoSend(buffer);
   ConsoleIoSend(ENDLINE);
   return COMMAND_SUCCESS;

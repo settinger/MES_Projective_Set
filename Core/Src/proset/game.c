@@ -36,14 +36,14 @@ static void eepromGetLevel(void) {
   if (EE_OK == EE_Init()) {
     Serial_Message("EEPROM initialized for level select.");
 
-/*
+    /*
      if ((EE_WriteVariable(EEPROM_PROSET_ADDRESS, 7)) != HAL_OK) {
-      Serial_Message("Error writing to EEPROM: Proset Address");
-      return;
-    } else {
-      Serial_Message("Level written, nice");
-    }
-*/
+     Serial_Message("Error writing to EEPROM: Proset Address");
+     return;
+     } else {
+     Serial_Message("Level written, nice");
+     }
+     */
 
     uint16_t readInt;
     if ((EE_ReadVariable(EEPROM_PROSET_ADDRESS, &readInt)) == HAL_OK) {
@@ -340,4 +340,56 @@ bool gameTouchHandler(uint16_t x, uint16_t y) {
     }
   }
   return false;
+}
+
+/*
+ * Update the game based on a keystroke received from console.
+ * It would be better to do this with a consoleCommandTable struct,
+ *   like we did in the console assignment, not a big if-else construction.
+ * Interfaces with game_graphics library
+ * Valid inputs are:
+ *     Numerals 1-9         toggle cards on table
+ *     'c'                  deselects all cards or, if no
+ *                            cards selected, selects all cards
+ *     'r'                  starts a new game
+ *     'l'                  opens level select screen
+ */
+void gameProcessInput(char oneChar) {
+  if ((48 < oneChar) && (oneChar < (48 + numDots))) {
+    // Act like a card was touched
+  } else if ((oneChar == 'C') || (oneChar == 'c')) {
+    // Check if any cards are selected currently
+    bool anySelected = false;
+    for (int i = 0; i < tableCards; i++) {
+      if (table[i].cardVal > 0 && table[i].selected) {
+        anySelected = true;
+        break;
+      }
+    }
+    // If any cards currently selected, deselect all; else, select all and check if valid set
+    for (int i = 0; i < tableCards; i++) {
+      if (table[i].cardVal > 0) {
+        table[i].selected = !anySelected;
+      }
+    }
+    if (anySelected) {
+      // Hack: deselect one of the cards and then use gameTouchHandler() to process if it's a valid set
+      for (int i = 0; i < tableCards; i++) {
+        if (table[i].cardVal > 0) {
+          table[i].selected = false;
+          gameTouchHandler(table[i].x, table[i].y); // TODO: THIS DOESN'T WORK BECAUSE IT DOESN'T SET OFF WIN CONDITION
+          break;
+        }
+      }
+    } else {
+      drawTable();
+    }
+  } else if ((oneChar == 'R') || (oneChar == 'r')) {
+    //    lastFrameTick = HAL_GetTick();
+    //    lastSecondTick = lastFrameTick;
+    //    gameStart = lastSecondTick + 250; // Hacky way to add a grace period before clock starts
+    //    prosetInit();
+  } else if ((oneChar == 'L') || (oneChar == 'l')) {
+    ; // Did I implement level select yet?
+  }
 }

@@ -39,5 +39,6 @@ typedef struct consoleCommandStruct {
 #define CONSOLE_COMMAND_TABLE_END {NULL, NULL, HELP("")}
 
 const consoleCommandTable * ConsoleCommandsGetTable(void);
+//commandResult commandProcess(char oneChar);
 
 #endif /* SRC_CONSOLE_COMMANDS_H_ */

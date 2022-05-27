@@ -211,7 +211,7 @@ void drawGameCardCount(uint16_t cardsLeft) {
 
 void drawGameWon(int level) {
   char winMsg[20];
-  sprintf(winMsg, "Level %d", level);
+  sprintf(winMsg, "%d-dot game", level);
 
   // Clear the existing sets display
   BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
@@ -219,8 +219,8 @@ void drawGameWon(int level) {
   BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
 
   BSP_LCD_SetFont(&Font16);
-  BSP_LCD_DisplayStringAt(-3, 280, (uint8_t*)"You won!", RIGHT_MODE);
-  BSP_LCD_DisplayStringAt(-11, 300, (uint8_t*) winMsg, RIGHT_MODE);
+  BSP_LCD_DisplayStringAt(-3, 280, (uint8_t*) winMsg, RIGHT_MODE);
+  BSP_LCD_DisplayStringAt(-7, 300, (uint8_t*) "complete!", RIGHT_MODE);
   BSP_LCD_SetFont(&Font16Condensed);
 
 }
