@@ -95,32 +95,41 @@ void ConsoleInit(void) {
  * Call this from a loop to handle commands as they become available.
  */
 // TODO: console
-bool ConsoleProcess(void) {
+gameStatus ConsoleProcess(void) {
   uint32_t received; // Number of inputs received
-  bool gameComplete = false;
+  gameStatus process;
 
   ConsoleIoReceive((uint8_t*) &(receiveBuffer[receivedSoFar]),
   CONSOLE_COMMAND_MAX_LENGTH - receivedSoFar, &received);
 
   if ((received > 0) || receiveBufferNeedsChecking) {
-    receiveBufferNeedsChecking = false;
+//    receiveBufferNeedsChecking = false;
     receivedSoFar += received;
     // Any input needs to be processed, not just inputs after endline
     // Check if received inputs are valid instructions
-    for (int i = 0; i < receivedSoFar; i++) {
-      gameComplete |= gameProcessInput(receiveBuffer[i]);
-    }
+    process = gameProcessInput(receiveBuffer[0]);
+
+//    for (int i = 0; i < receivedSoFar; i++) {
+//      //gameComplete |= gameProcessInput(receiveBuffer[i]);
+//      process = gameProcessInput(receiveBuffer[i]);
+//      if (GAME_IN_PLAY != process) {
+//        if (GAME_RESET == process) {
+//          Serial_Message("Reset happen");
+//        }
+//        return process;
+//      }
+//      // TODO: fix this; gameProcessInput might return GAME_IN_PLAY, GAME_ENDED, GAME_RESET, GAME_LEVEL_SELECT
+//      // Also need to clear buffer still
+//    }
 
     // Reset buffer by moving any leftovers and nulling the rest.
     // This clears up to and including the front endline character.
-    receivedSoFar = ConsoleResetBuffer(receiveBuffer, receivedSoFar,
-        receivedSoFar);
+    receivedSoFar = ConsoleResetBuffer(receiveBuffer, receivedSoFar, 1);
     receiveBufferNeedsChecking = (receivedSoFar > 0); // (receivedSoFar > 0 ? true : false);
   }
 
-  return gameComplete;
+  return process;
 }
-
 
 /*
  * The C library itoa is sometimes a complicated function and the library costs

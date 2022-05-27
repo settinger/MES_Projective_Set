@@ -67,12 +67,12 @@
 
 /* USER CODE BEGIN PV */
 uint32_t button0_debounce_time_old = 0; // Counter to track button debounce time
-uint32_t gameStart;                     // When (in ms since boot) the current game started
+uint32_t gameStart;          // When (in ms since boot) the current game started
 uint32_t lastFrameTick = 0;             // Counter to track when to update frame
-uint32_t lastSecondTick = 0;            // Counter to track when to update time indicator
+uint32_t lastSecondTick = 0;   // Counter to track when to update time indicator
 uint32_t nextTick = 0;                  // Counter for measuring time
 TS_StateTypeDef TS_State;               // Touchscreen struct
-uint16_t touchStateTransition = 0;      // Counter for touch state event detection
+uint16_t touchStateTransition = 0;    // Counter for touch state event detection
 void (*checkTouch)(void);               // Function pointer for touch states
 bool gameOn;                            // Whether a game is in play or not
 
@@ -120,8 +120,8 @@ void handleTouchBegin(void) {
   Serial_Message("\nTouch Y coordinate: ");
   Print_Int(TS_State.Y);
 
-  // gameTouchHandler returns 1 if the game has completed and 0 otherwise
-  if (gameTouchHandler(x, y)) {
+  // gameTouchHandler returns a game state
+  if (GAME_ENDED == gameTouchHandler(x, y)) {
     winConditions();
   }
 }
@@ -270,9 +270,16 @@ int main(void) {
 
         checkTouch();
 
-        // ConsoleProcess returns 1 if the game has completed and 0 otherwise
-        if (ConsoleProcess()) {
+        // ConsoleProcess returns a game status
+        gameStatus gameState = ConsoleProcess();
+        if (GAME_ENDED == gameState) {
           winConditions();
+        } else if (GAME_RESET == gameState) {
+          Serial_Message("Reset hello");
+          lastFrameTick = HAL_GetTick();
+          lastSecondTick = lastFrameTick;
+          gameStart = lastSecondTick; // Hacky way to add a grace period before clock starts
+          prosetInit();
         }
       }
     }

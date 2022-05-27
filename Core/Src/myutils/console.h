@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "game.h"
 
 #define CONSOLE_PROMPT ("> ")
 #define PARAMETER_SEPARATOR (' ')
@@ -23,7 +24,7 @@
 
 // Console init and operate functions called from main.c
 void ConsoleInit(void);
-bool ConsoleProcess(void);
+gameStatus ConsoleProcess(void);
 
 // Structure of instruction response, called from consoleCommands.c
 typedef enum {

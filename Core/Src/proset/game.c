@@ -62,7 +62,7 @@ static void eepromGetLevel(void) {
 /*
  * Send debug instruction to show table/deck status
  */
-static void gameStatus(void) {
+static void printGameStatus(void) {
   Serial_Message_NB("Number of dots: ");
   Print_Int(numDots);
   Serial_Message_NB("Cards left in deck: ");
@@ -238,7 +238,7 @@ void prosetInit(void) {
   drawTable();
   drawTime(0, false);
 #ifdef DEBUG
-  gameStatus();
+  printGameStatus();
 #endif
 }
 
@@ -293,7 +293,7 @@ static bool gameComplete(void) {
  */
 static void takeAwaySet(void) {
 #ifdef DEBUG
-  Serial_Message("Set was found!");
+  Serial_Message("\r\nSet was found!");
 #endif
   // Remove all selected cards, set slot cardval to -1
   // If deck and table exhausted, enter win state
@@ -310,9 +310,9 @@ static void takeAwaySet(void) {
 /*
  * Update the game based on a touch occurring at (x, y)
  * Interfaces with game_graphics library
- * Returns "true" if game is completed by this action
+ * Returns GAME_IN_PLAY or GAME_ENDED if game is completed by this action
  */
-bool gameTouchHandler(uint16_t x, uint16_t y) {
+gameStatus gameTouchHandler(uint16_t x, uint16_t y) {
   for (int i = 0; i < tableCards; i++) {
     if ((table[i].cardVal > 0) && CARDHIT(table[i].x, table[i].y, x, y)) {
       table[i].selected = !table[i].selected;
@@ -332,7 +332,7 @@ bool gameTouchHandler(uint16_t x, uint16_t y) {
 #ifdef DEBUG
           Serial_Message("Game complete!");
 #endif
-          return true;
+          return GAME_ENDED;
         }
       } else {
         drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected);
@@ -340,7 +340,7 @@ bool gameTouchHandler(uint16_t x, uint16_t y) {
       break;
     }
   }
-  return false;
+  return GAME_IN_PLAY;
 }
 
 /*
@@ -356,7 +356,7 @@ bool gameTouchHandler(uint16_t x, uint16_t y) {
  *     'r'                  starts a new game
  *     'l'                  opens level select screen
  */
-bool gameProcessInput(char oneChar) {
+gameStatus gameProcessInput(char oneChar) {
   if ((48 < oneChar) && (oneChar <= (48 + tableCards))) {
     // Act like a card was touched
     int cardIndex = oneChar-49; // e.g. ASCII 49 "1" corresponds to card 0
@@ -385,7 +385,7 @@ bool gameProcessInput(char oneChar) {
 #ifdef DEBUG
         Serial_Message("Game complete!");
 #endif
-        return true;
+        return GAME_ENDED;
       }
     } else {
       drawTable();
@@ -395,8 +395,9 @@ bool gameProcessInput(char oneChar) {
     //    lastSecondTick = lastFrameTick;
     //    gameStart = lastSecondTick + 250; // Hacky way to add a grace period before clock starts
     //    prosetInit();
+    return GAME_RESET;
   } else if ((oneChar == 'L') || (oneChar == 'l')) {
     ; // Did I implement level select yet?
   }
-  return false;
+  return GAME_IN_PLAY;
 }
