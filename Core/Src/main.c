@@ -66,7 +66,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint32_t button0_debounce_time_old = 0; // Counter to track button debounce time
+uint32_t button0_counter = 0; // How many frames the button has been held for
 uint32_t gameStart;          // When (in ms since boot) the current game started
 uint32_t lastFrameTick = 0;             // Counter to track when to update frame
 uint32_t lastSecondTick = 0;   // Counter to track when to update time indicator
@@ -82,21 +82,17 @@ bool gameOn;                            // Whether a game is in play or not
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+static void winConditions(void);
+static gameStatus handleTouchBegin(void);
+static void handleTouchEnd(void);
+static void clearIdle(void);
+static void touchMaybe(void);
+static void touchIdle(void);
+static void clearMaybe(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-// External-interrupt callback to toggle LD4 when user button is pressed
-// Debounces by expecting a 10ms gap (or more) between valid presses
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  uint32_t button0_debounce_time_new = HAL_GetTick();
-  if ((button0_debounce_time_new - button0_debounce_time_old)
-      >= DEBOUNCE_TIME_MS) {
-    HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
-    button0_debounce_time_old = button0_debounce_time_new;
-  }
-}
 
 /*
  * Methods to run when win condition is met
@@ -116,9 +112,9 @@ static gameStatus handleTouchBegin(void) {
   int16_t x = TS_State.X;
   int16_t y = TS_State.Y;
   y = 320 - y;
-  Serial_Message("\nTouch X coordinate: ");
+  Serial_Message_NB("Touch X coordinate: ");
   Print_Int(TS_State.X);
-  Serial_Message("\nTouch Y coordinate: ");
+  Serial_Message_NB("Touch Y coordinate: ");
   Print_Int(TS_State.Y);
 
   if (GAME_IN_PLAY == gameState) {
@@ -141,7 +137,7 @@ static void handleTouchEnd(void) {
 
 // Run this function to determine how to parse a touch while in CLEAR_IDLE state (i.e. no touch is occurring)
 // If a touch is detected, enter TOUCH_MAYBE state
-void clearIdle(void) {
+static void clearIdle(void) {
   if (TS_State.TouchDetected) {
     checkTouch = &touchMaybe;
     touchStateTransition = 1;
@@ -150,7 +146,7 @@ void clearIdle(void) {
 
 // Run this function to determine how to parse a touch while in TOUCH_MAYBE state (i.e. a touch might be occurring)
 // If four consecutive frames register touches (60 ms), enter TOUCH_IDLE state
-void touchMaybe(void) {
+static void touchMaybe(void) {
   if (TS_State.TouchDetected) {
     touchStateTransition++;
     if (4 == touchStateTransition) {
@@ -166,7 +162,7 @@ void touchMaybe(void) {
 
 // Run this function to determine how to parse a touch while in TOUCH_IDLE state (i.e. finger is currently touching screen)
 // If no touch is detected, enter CLEAR_MAYBE state
-void touchIdle() {
+static void touchIdle() {
   if (!TS_State.TouchDetected) {
     checkTouch = &clearMaybe;
     touchStateTransition = 1;
@@ -175,7 +171,7 @@ void touchIdle() {
 
 // Run this function to determine how to parse a touch while in CLEAR_MAYBE state (i.e. a touch might have ended)
 // If four consecutive frames register no touch (60 ms), enter CLEAR_IDLE state
-void clearMaybe() {
+static void clearMaybe() {
   if (TS_State.TouchDetected) {
     checkTouch = &touchIdle;
     touchStateTransition = 0;
@@ -307,13 +303,28 @@ int main(void) {
       if ((GAME_IN_PLAY == gameState) || (GAME_LEVEL_SELECT == gameState)
           || (GAME_ENDED == gameState)) {
         gameState = ConsoleProcess(gameState);
-        // TODO: HANDLE KEYPRESS IN LEVEL_SELECT
       }
 
       // If game is in IN_PLAY, LEVEL_SELECT, or GAME_ENDED state, check for button press
-      // This may cause the game state to enter one of the transition states
+      // Any length press clears selection if in GAME_IN_PLAY state
+      //   (This may cause the game state to enter one of the transition states)
+      // Hold for 1 second (50 frame) to reset game (if in GAME_IN_PLAY or GAME_ENDED state)
+      // Hold for 4 seconds (200 frames) to enter LEVEL_SELECT
       if ((GAME_IN_PLAY == gameState) || (GAME_LEVEL_SELECT == gameState)
           || (GAME_ENDED == gameState)) {
+        if (GPIO_PIN_SET == BSP_PB_GetState(BUTTON_KEY)) {
+          button0_counter++;
+          if (button0_counter == 200) {
+            gameState = GAME_ENTER_LEVEL_SELECT;
+          } else if ((button0_counter == 50)
+              && (GAME_LEVEL_SELECT != gameState)) {
+            gameState = GAME_INIT;
+          } else if ((button0_counter == 1) && (GAME_IN_PLAY == gameState)) {
+            gameState = clearTable();
+          }
+        } else {
+          button0_counter = 0;
+        }
       }
     }
 
