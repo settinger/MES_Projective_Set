@@ -34,5 +34,6 @@ gameStatus gameTouchHandler(uint16_t x, uint16_t y);
 gameStatus gameProcessInput(char oneChar);
 gameStatus levelSelectTouchHandler(uint16_t x, uint16_t y);
 gameStatus levelSelectProcessInput(char oneChar);
+gameStatus clearTable(void);
 
 #endif /* SRC_PROSET_GAME_H_ */

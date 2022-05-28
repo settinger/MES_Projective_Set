@@ -80,7 +80,6 @@ void ConsoleInit(void) {
   ConsoleIoSend(ENDLINE);
   ConsoleIoSend("   'l' opens level-select screen");
   ConsoleIoSend(ENDLINE);
-  ConsoleIoSend(CONSOLE_PROMPT);
   receivedSoFar = 0u;
 
   for (i = 0u; i < CONSOLE_COMMAND_MAX_LENGTH; i++) {

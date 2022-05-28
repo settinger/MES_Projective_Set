@@ -395,33 +395,7 @@ gameStatus gameProcessInput(char oneChar) {
     int cardIndex = oneChar - 49; // e.g. ASCII 49 "1" corresponds to card 0
     return gameTouchHandler(table[cardIndex].x, table[cardIndex].y);
   } else if ((oneChar == 'C') || (oneChar == 'c')) {
-    // Check if any cards are selected currently
-    bool anySelected = false;
-    for (int i = 0; i < tableCards; i++) {
-      if (table[i].cardVal > 0 && table[i].selected) {
-        anySelected = true;
-        break;
-      }
-    }
-    // If any cards currently selected, deselect all; else, select all and check if valid set
-    for (int i = 0; i < tableCards; i++) {
-      if (table[i].cardVal > 0) {
-        table[i].selected = !anySelected;
-      }
-    }
-    if (!anySelected && selectionIsValid()) {
-      takeAwaySet();
-      drawTable();
-      if (gameComplete()) {
-        drawGameWon(numDots);
-#ifdef DEBUG
-        Serial_Message("Game complete!");
-#endif
-        return GAME_WIN;
-      }
-    } else {
-      drawTable();
-    }
+    return clearTable();
   } else if ((oneChar == 'R') || (oneChar == 'r')) {
     return GAME_INIT;
   } else if ((oneChar == 'L') || (oneChar == 'l')) {
@@ -444,3 +418,40 @@ gameStatus levelSelectProcessInput(char oneChar) {
   return GAME_LEVEL_SELECT;
 }
 
+/*
+ * Clear the selected cards
+ * Why is this so complex? Because:
+ * If no cards are selected, this selects ALL cards,
+ * and that sometimes results in a set being found,
+ * and THAT sometimes results in a game ending!
+ */
+gameStatus clearTable(void) {
+  // Check if any cards are selected currently
+  bool anySelected = false;
+  for (int i = 0; i < tableCards; i++) {
+    if (table[i].cardVal > 0 && table[i].selected) {
+      anySelected = true;
+      break;
+    }
+  }
+  // If any cards currently selected, deselect all; else, select all and check if valid set
+  for (int i = 0; i < tableCards; i++) {
+    if (table[i].cardVal > 0) {
+      table[i].selected = !anySelected;
+    }
+  }
+  if (!anySelected && selectionIsValid()) {
+    takeAwaySet();
+    drawTable();
+    if (gameComplete()) {
+      drawGameWon(numDots);
+#ifdef DEBUG
+      Serial_Message("Game complete!");
+#endif
+      return GAME_WIN;
+    }
+  } else {
+    drawTable();
+  }
+  return GAME_IN_PLAY;
+}
