@@ -19,6 +19,10 @@ uint16_t tableCards;
 int deck[MAX_CARDS];
 int deckPointer = -1; // Index of next card to be dealt from the deck array
 CardSlot table[10];
+static void findSolution(void);
+
+// Get the value of a single bit
+#define BITREAD(number, place) (number & (1 << place))
 
 /*
  * Load difficulty level from EEPROM
@@ -367,7 +371,7 @@ gameStatus gameTouchHandler(uint16_t x, uint16_t y) {
 gameStatus levelSelectTouchHandler(uint16_t x, uint16_t y) {
   for (int i = 0; i < tableCards; i++) {
     if (CARDHIT(table[i].x, table[i].y, x, y)) {
-      numDots = i+4;
+      numDots = i + 4;
       eepromSetLevel(numDots);
       deckSize = (1 << numDots) - 1;
       tableCards = numDots + 1;
@@ -388,6 +392,7 @@ gameStatus levelSelectTouchHandler(uint16_t x, uint16_t y) {
  *                            cards selected, selects all cards
  *     'r'                  starts a new game
  *     'l'                  opens level select screen
+ *     'h'                  get a hint
  */
 gameStatus gameProcessInput(char oneChar) {
   if ((48 < oneChar) && (oneChar <= (48 + tableCards))) {
@@ -400,6 +405,8 @@ gameStatus gameProcessInput(char oneChar) {
     return GAME_INIT;
   } else if ((oneChar == 'L') || (oneChar == 'l')) {
     return GAME_ENTER_LEVEL_SELECT;
+  } else if ((oneChar == 'H') || (oneChar == 'h')) {
+    findSolution();
   }
   return GAME_IN_PLAY;
 }
@@ -454,4 +461,32 @@ gameStatus clearTable(void) {
     drawTable();
   }
   return GAME_IN_PLAY;
+}
+
+/*
+ * If you're stuck, press 'h' to get a solution on the board
+ */
+static void findSolution(void) {
+  for (int i = 1; i < (1 << tableCards); i++) {
+    int xorResult = 0;
+    for (int j = 0; j < tableCards; j++) {
+      if (BITREAD(i, j)) {
+        if (table[j].cardVal <= 0) {
+          break;
+        }
+        xorResult ^= table[j].cardVal;
+      }
+    }
+    if (xorResult == 0) {
+      Serial_Message_NB("\r\nHere is a set: ");
+      for (int j = 0; j < tableCards; j++) {
+        if (BITREAD(i, j)) {
+          //Serial_Message_NB((char)(j+65)); // This causes 0 to print "A", 1 to print "B", etc
+          Print_Int_NB(j+1); // Shift from zero-index to one-index to match keyboard inputs
+        }
+      }
+      Serial_Message("");
+      break;
+    }
+  }
 }
