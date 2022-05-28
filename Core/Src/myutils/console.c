@@ -94,33 +94,22 @@ void ConsoleInit(void) {
  * No checking for endlines for this particular application.
  * Call this from a loop to handle commands as they become available.
  */
-// TODO: console
-gameStatus ConsoleProcess(void) {
+gameStatus ConsoleProcess(gameStatus currentStatus) {
   uint32_t received; // Number of inputs received
-  gameStatus process;
+  gameStatus process = currentStatus;
 
   ConsoleIoReceive((uint8_t*) &(receiveBuffer[receivedSoFar]),
   CONSOLE_COMMAND_MAX_LENGTH - receivedSoFar, &received);
 
   if ((received > 0) || receiveBufferNeedsChecking) {
-//    receiveBufferNeedsChecking = false;
     receivedSoFar += received;
     // Any input needs to be processed, not just inputs after endline
     // Check if received inputs are valid instructions
-    process = gameProcessInput(receiveBuffer[0]);
-
-//    for (int i = 0; i < receivedSoFar; i++) {
-//      //gameComplete |= gameProcessInput(receiveBuffer[i]);
-//      process = gameProcessInput(receiveBuffer[i]);
-//      if (GAME_IN_PLAY != process) {
-//        if (GAME_RESET == process) {
-//          Serial_Message("Reset happen");
-//        }
-//        return process;
-//      }
-//      // TODO: fix this; gameProcessInput might return GAME_IN_PLAY, GAME_ENDED, GAME_RESET, GAME_LEVEL_SELECT
-//      // Also need to clear buffer still
-//    }
+    if (GAME_LEVEL_SELECT == currentStatus) {
+      process = levelSelectProcessInput(receiveBuffer[0]);
+    } else {
+      process = gameProcessInput(receiveBuffer[0]);
+    }
 
     // Reset buffer by moving any leftovers and nulling the rest.
     // This clears up to and including the front endline character.

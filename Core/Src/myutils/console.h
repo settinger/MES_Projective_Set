@@ -24,7 +24,7 @@
 
 // Console init and operate functions called from main.c
 void ConsoleInit(void);
-gameStatus ConsoleProcess(void);
+gameStatus ConsoleProcess(gameStatus currentStatus);
 
 // Structure of instruction response, called from consoleCommands.c
 typedef enum {

@@ -160,9 +160,9 @@ void drawCard(uint16_t x, uint16_t y, int value, bool selected) {
   // If card value has a 1 bit in the 128's place, draw dark gray dot
   if (value & 0x80) {
     BSP_LCD_SetTextColor(LCD_COLOR_DARKGRAY);
-    BSP_LCD_FillCircle(x, y - CARD_HALFUNIT, DOT_RADIUS);
+    BSP_LCD_FillCircle(x, y + CARD_HALFUNIT, DOT_RADIUS);
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-    BSP_LCD_DrawCircle(x, y - CARD_HALFUNIT, DOT_RADIUS);
+    BSP_LCD_DrawCircle(x, y + CARD_HALFUNIT, DOT_RADIUS);
   }
 }
 
@@ -208,6 +208,15 @@ void drawGameCardCount(uint16_t cardsLeft) {
   BSP_LCD_DisplayStringAt(-3, 300, (uint8_t*) string, RIGHT_MODE);
 }
 
+//
+void drawLevelSelectText(void) {
+  BSP_LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+  BSP_LCD_FillRect(0, 280, 240, 40);
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+  BSP_LCD_SetFont(&Font24);
+  BSP_LCD_DisplayStringAt(0, 280, (uint8_t*) "Choose Game", CENTER_MODE);
+}
+
 
 void drawGameWon(int level) {
   char winMsg[20];
@@ -222,5 +231,4 @@ void drawGameWon(int level) {
   BSP_LCD_DisplayStringAt(-3, 280, (uint8_t*) winMsg, RIGHT_MODE);
   BSP_LCD_DisplayStringAt(-7, 300, (uint8_t*) "complete!", RIGHT_MODE);
   BSP_LCD_SetFont(&Font16Condensed);
-
 }

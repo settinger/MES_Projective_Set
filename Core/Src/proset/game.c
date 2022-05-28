@@ -25,26 +25,15 @@ CardSlot table[10];
  * If found, set up game for that difficulty level
  * If not found, use Difficulty 6
  * TODO: Possibly consider combining with the touchscreen.c EEPROM read event
- * TODO: Write a value here for the first time
  * TODO: Set linker to avoid writing code into EEPROM space
  */
-static void eepromGetLevel(void) {
+void eepromGetLevel(void) {
   numDots = 6;
   Serial_Message("EEPROM initializing for level select...");
   HAL_FLASH_Unlock();
   HAL_Delay(10);
   if (EE_OK == EE_Init()) {
     Serial_Message("EEPROM initialized for level select.");
-
-    /*
-     if ((EE_WriteVariable(EEPROM_PROSET_ADDRESS, 7)) != HAL_OK) {
-     Serial_Message("Error writing to EEPROM: Proset Address");
-     return;
-     } else {
-     Serial_Message("Level written, nice");
-     }
-     */
-
     uint16_t readInt;
     if ((EE_ReadVariable(EEPROM_PROSET_ADDRESS, &readInt)) == HAL_OK) {
       Serial_Message("Level loaded!");
@@ -57,6 +46,22 @@ static void eepromGetLevel(void) {
   HAL_FLASH_Lock();
   deckSize = (1 << numDots) - 1;
   tableCards = numDots + 1;
+}
+
+static void eepromSetLevel(uint16_t numDots) {
+  HAL_FLASH_Unlock();
+  HAL_Delay(10);
+  if (EE_OK == EE_Init()) {
+    Serial_Message("EEPROM initialized for writing settings.");
+
+    if ((EE_WriteVariable(EEPROM_PROSET_ADDRESS, numDots)) != HAL_OK) {
+      Serial_Message("Error writing to EEPROM: Proset Address");
+      return;
+    } else {
+      Serial_Message("Level written, nice");
+    }
+  }
+  HAL_FLASH_Lock();
 }
 
 /*
@@ -229,7 +234,6 @@ void drawTable() {
  * Initialize deck, shuffle deck
  */
 void prosetInit(void) {
-  eepromGetLevel();
   initDeck();
   deckPointer = 0;
   initTable();
@@ -240,6 +244,25 @@ void prosetInit(void) {
 #ifdef DEBUG
   printGameStatus();
 #endif
+}
+
+/*
+ * Level select is a special case of which cards to lay out
+ */
+void levelSelectInit(void) {
+  deck[0] = 0b00001111;
+  deck[1] = 0b00011111;
+  deck[2] = 0b00111111;
+  deck[3] = 0b01111111;
+  deck[4] = 0b11111111;
+  deckPointer = 0;
+  numDots = 4;
+  tableCards = 5;
+  initTable();
+  prepareDisplay();
+  dealCards();
+  drawTable();
+  drawLevelSelectText();
 }
 
 /*
@@ -316,15 +339,10 @@ gameStatus gameTouchHandler(uint16_t x, uint16_t y) {
   for (int i = 0; i < tableCards; i++) {
     if ((table[i].cardVal > 0) && CARDHIT(table[i].x, table[i].y, x, y)) {
       table[i].selected = !table[i].selected;
-      // Do validity-of-set calculations here
       if (selectionIsValid()) {
         takeAwaySet();
         drawTable();
         if (gameComplete()) {
-          // TODO: do win conditions here
-          // Timer gets stopped in main.c by returning true, so don't worry about that
-          // Change "Cards left: 0" text to "Game complete!" or "You win!" or something
-          // Set timer text to blue
           char winMsg[20];
           sprintf(winMsg, "You won lvl %d!", numDots);
           Serial_Message(winMsg);
@@ -332,7 +350,7 @@ gameStatus gameTouchHandler(uint16_t x, uint16_t y) {
 #ifdef DEBUG
           Serial_Message("Game complete!");
 #endif
-          return GAME_ENDED;
+          return GAME_WIN;
         }
       } else {
         drawCard(table[i].x, table[i].y, table[i].cardVal, table[i].selected);
@@ -344,11 +362,26 @@ gameStatus gameTouchHandler(uint16_t x, uint16_t y) {
 }
 
 /*
+ * Update the level select screen based on a touch occurring at (x, y)
+ */
+gameStatus levelSelectTouchHandler(uint16_t x, uint16_t y) {
+  for (int i = 0; i < tableCards; i++) {
+    if (CARDHIT(table[i].x, table[i].y, x, y)) {
+      numDots = i+4;
+      eepromSetLevel(numDots);
+      deckSize = (1 << numDots) - 1;
+      tableCards = numDots + 1;
+      return GAME_INIT;
+    }
+  }
+  return GAME_LEVEL_SELECT;
+}
+
+/*
  * Update the game based on a keystroke received from console.
- * Returns "true" if game is completed by this action.
+ * Returns the game state resulting from this action.
  * It would be better to do this with a consoleCommandTable struct,
  *   like we did in the console assignment, not a big if-else construction.
- * Interfaces with game_graphics library
  * Valid inputs are:
  *     Numerals 1-9         toggle cards on table
  *     'c'                  deselects all cards or, if no
@@ -359,7 +392,7 @@ gameStatus gameTouchHandler(uint16_t x, uint16_t y) {
 gameStatus gameProcessInput(char oneChar) {
   if ((48 < oneChar) && (oneChar <= (48 + tableCards))) {
     // Act like a card was touched
-    int cardIndex = oneChar-49; // e.g. ASCII 49 "1" corresponds to card 0
+    int cardIndex = oneChar - 49; // e.g. ASCII 49 "1" corresponds to card 0
     return gameTouchHandler(table[cardIndex].x, table[cardIndex].y);
   } else if ((oneChar == 'C') || (oneChar == 'c')) {
     // Check if any cards are selected currently
@@ -380,24 +413,34 @@ gameStatus gameProcessInput(char oneChar) {
       takeAwaySet();
       drawTable();
       if (gameComplete()) {
-        // TODO: do win conditions here
         drawGameWon(numDots);
 #ifdef DEBUG
         Serial_Message("Game complete!");
 #endif
-        return GAME_ENDED;
+        return GAME_WIN;
       }
     } else {
       drawTable();
     }
   } else if ((oneChar == 'R') || (oneChar == 'r')) {
-    //    lastFrameTick = HAL_GetTick();
-    //    lastSecondTick = lastFrameTick;
-    //    gameStart = lastSecondTick + 250; // Hacky way to add a grace period before clock starts
-    //    prosetInit();
-    return GAME_RESET;
+    return GAME_INIT;
   } else if ((oneChar == 'L') || (oneChar == 'l')) {
-    ; // Did I implement level select yet?
+    return GAME_ENTER_LEVEL_SELECT;
   }
   return GAME_IN_PLAY;
 }
+
+/*
+ * Update the level-select screen based on a keystroke received from console.
+ * Valid inputs are:
+ *     Numerals 1-5         toggle cards on table
+ */
+gameStatus levelSelectProcessInput(char oneChar) {
+  if ((48 < oneChar) && (oneChar <= (48 + tableCards))) {
+    // Act like a card was touched
+    int cardIndex = oneChar - 49; // e.g. ASCII 49 "1" corresponds to card 0
+    return levelSelectTouchHandler(table[cardIndex].x, table[cardIndex].y);
+  }
+  return GAME_LEVEL_SELECT;
+}
+

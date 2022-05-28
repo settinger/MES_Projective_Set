@@ -72,6 +72,7 @@ uint32_t lastFrameTick = 0;             // Counter to track when to update frame
 uint32_t lastSecondTick = 0;   // Counter to track when to update time indicator
 uint32_t nextTick = 0;                  // Counter for measuring time
 TS_StateTypeDef TS_State;               // Touchscreen struct
+gameStatus gameState;                   // State of game
 uint16_t touchStateTransition = 0;    // Counter for touch state event detection
 void (*checkTouch)(void);               // Function pointer for touch states
 bool gameOn;                            // Whether a game is in play or not
@@ -102,7 +103,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
  * TODO: Finish
  */
 static void winConditions(void) {
-  gameOn = false;
+  gameState = GAME_ENDED;
   drawTime(lastSecondTick - gameStart, true);
   // TODO: win condition
 }
@@ -111,7 +112,7 @@ static void winConditions(void) {
  * Nonblocking(?) Touch detection with debounce based on WaitForPressedState() method
  */
 // Run this when a touch has been confirmed to be occurring
-void handleTouchBegin(void) {
+static gameStatus handleTouchBegin(void) {
   int16_t x = TS_State.X;
   int16_t y = TS_State.Y;
   y = 320 - y;
@@ -120,14 +121,19 @@ void handleTouchBegin(void) {
   Serial_Message("\nTouch Y coordinate: ");
   Print_Int(TS_State.Y);
 
-  // gameTouchHandler returns a game state
-  if (GAME_ENDED == gameTouchHandler(x, y)) {
-    winConditions();
+  if (GAME_IN_PLAY == gameState) {
+    // gameTouchHandler returns either GAME_WIN or GAME_IN_PLAY
+    return gameTouchHandler(x, y);
+  } else {
+    // Must be in GAME_LEVEL_SELECT state to reach here
+    // levelSelectTouchHandler returns either GAME_INIT or GAME_LEVEL_SELECT
+    return levelSelectTouchHandler(x, y);
   }
+
 }
 
 // Run this when a touch has been confirmed to have ended
-void handleTouchEnd(void) {
+static void handleTouchEnd(void) {
 //  int16_t x = TS_State.X;
 //  int16_t y = TS_State.Y;
 //  y = 320 - y;
@@ -150,7 +156,7 @@ void touchMaybe(void) {
     if (4 == touchStateTransition) {
       checkTouch = &touchIdle;
       touchStateTransition = 0;
-      handleTouchBegin();
+      gameState = handleTouchBegin();
     }
   } else {
     checkTouch = &clearIdle;
@@ -226,61 +232,88 @@ int main(void) {
   MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
+  gameState = SYSTEM_BOOT;
+
   Serial_Message("\r\n######################\r\n\nDevice has turned on.\r\n");
 
   // Enable LCD and touchscreen, but don't turn it on yet
   BSP_LCD_Init();
-
 //  if (TS_Get_Params() != 0) {
 //    Touchscreen_Calibration();
 //    HAL_FLASH_Lock();
 //  }
-
   BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
 
   // Begin Console
   ConsoleInit();
 
+  // Do EEPROM read to get last-set level
+  eepromGetLevel();
+
   // Begin Game
   lastFrameTick = HAL_GetTick();
   lastSecondTick = lastFrameTick;
-  gameStart = lastSecondTick + 250; // Hacky way to add a grace period before clock starts
+  gameStart = lastSecondTick;
+  gameState = GAME_INIT;
   prosetInit();
   checkTouch = &clearIdle;
-  gameOn = true; //////////////////////////////// BAD
+  gameState = GAME_IN_PLAY;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
-    if (gameOn) {
-      // Update clock if necessary
-      // Idle so screen is drawn at (at most) 50 FPS
-      // Check if a new touch has occurred
-      nextTick = HAL_GetTick();
-      if ((nextTick - lastSecondTick) > 1000) {
-        // Update clock time
-        lastSecondTick += 1000;
-        drawTime(lastSecondTick - gameStart, false);
+    nextTick = HAL_GetTick();
+
+    // Update clock if a game is ongoing
+    if ((GAME_IN_PLAY == gameState) && ((nextTick - lastSecondTick) > 1000)) {
+      // Update clock time
+      lastSecondTick += 1000;
+      drawTime(lastSecondTick - gameStart, false);
+    }
+
+    // Idle so screen a is drawn at (at most) 50 FPS
+    //   (and game updates occur at most 50 FPS
+    // When updating screen, check for new touch or console input
+    if ((nextTick - lastFrameTick) > FRAME_DELAY) {
+      lastFrameTick = nextTick;
+
+      // If game is in a transition state (GAME_INIT, GAME_WIN, ENTER_LEVEL_SELECT), move to next state
+      if (GAME_INIT == gameState) {
+        Serial_Message("Reset game");
+        lastFrameTick = HAL_GetTick();
+        lastSecondTick = lastFrameTick;
+        gameStart = lastSecondTick;
+        prosetInit();
+        gameState = GAME_IN_PLAY;
+      } else if (GAME_WIN == gameState) {
+        winConditions();
+      } else if (GAME_ENTER_LEVEL_SELECT == gameState) {
+        // level select screen
+        levelSelectInit();
+        gameState = GAME_LEVEL_SELECT;
       }
-      if ((nextTick - lastFrameTick) > FRAME_DELAY) {
-        lastFrameTick = nextTick;
+
+      // If game is in IN_PLAY state or LEVEL_SELECT state, check for screen touch
+      // This may cause the game state to enter one of the transition states
+      if ((GAME_IN_PLAY == gameState) || (GAME_LEVEL_SELECT == gameState)) {
         BSP_TS_GetState(&TS_State);
-
         checkTouch();
+      }
 
-        // ConsoleProcess returns a game status
-        gameStatus gameState = ConsoleProcess();
-        if (GAME_ENDED == gameState) {
-          winConditions();
-        } else if (GAME_RESET == gameState) {
-          Serial_Message("Reset hello");
-          lastFrameTick = HAL_GetTick();
-          lastSecondTick = lastFrameTick;
-          gameStart = lastSecondTick; // Hacky way to add a grace period before clock starts
-          prosetInit();
-        }
+      // If game is in IN_PLAY, LEVEL_SELECT, or GAME_ENDED state, check for keypress
+      // This may cause the game state to enter one of the transition states
+      if ((GAME_IN_PLAY == gameState) || (GAME_LEVEL_SELECT == gameState)
+          || (GAME_ENDED == gameState)) {
+        gameState = ConsoleProcess(gameState);
+        // TODO: HANDLE KEYPRESS IN LEVEL_SELECT
+      }
+
+      // If game is in IN_PLAY, LEVEL_SELECT, or GAME_ENDED state, check for button press
+      // This may cause the game state to enter one of the transition states
+      if ((GAME_IN_PLAY == gameState) || (GAME_LEVEL_SELECT == gameState)
+          || (GAME_ENDED == gameState)) {
       }
     }
 

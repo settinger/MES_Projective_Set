@@ -59,5 +59,6 @@ void drawTable(void);
 void drawGameTime(uint32_t, bool);
 void drawGameCardCount(uint16_t sets);
 void drawGameWon(int);
+void drawLevelSelectText(void);
 
 #endif /* SRC_DISPLAY_H_ */
