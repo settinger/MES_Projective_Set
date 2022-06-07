@@ -96,12 +96,11 @@ static void clearMaybe(void);
 
 /*
  * Methods to run when win condition is met
- * TODO: Finish
  */
 static void winConditions(void) {
   gameState = GAME_ENDED;
   drawTime(lastSecondTick - gameStart, true);
-  // Other win events?
+  // TODO: Other win events? Music would be nice
 }
 
 /*
@@ -309,12 +308,12 @@ int main(void) {
       // Any length press clears selection if in GAME_IN_PLAY state
       //   (This may cause the game state to enter one of the transition states)
       // Hold for 1 second (50 frame) to reset game (if in GAME_IN_PLAY or GAME_ENDED state)
-      // Hold for 4 seconds (200 frames) to enter LEVEL_SELECT
+      // Hold for 3 seconds (150 frames) to enter LEVEL_SELECT
       if ((GAME_IN_PLAY == gameState) || (GAME_LEVEL_SELECT == gameState)
           || (GAME_ENDED == gameState)) {
         if (GPIO_PIN_SET == BSP_PB_GetState(BUTTON_KEY)) {
           button0_counter++;
-          if (button0_counter == 200) {
+          if (button0_counter == 150) {
             gameState = GAME_ENTER_LEVEL_SELECT;
           } else if ((button0_counter == 50)
               && (GAME_LEVEL_SELECT != gameState)) {
